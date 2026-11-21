@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "freitasvarejo-ui",
-  "homepage": "https://github.com/FreitasVarejo/ui",
+  "name": "freitasvarejo-ui-library",
+  "homepage": "https://github.com/FreitasVarejo/ui-library",
   "include": [
     "registry/agent-kit/registry.json",
     "registry/app-shell/registry.json",

@@ -11,7 +11,7 @@
         "button",
         "collapsible",
         "progress",
-        "FreitasVarejo/ui/states"
+        "FreitasVarejo/ui-library/states"
       ],
       "files": [
         {
@@ -50,7 +50,7 @@
           "target": "@components/jobs-panel/index.ts"
         }
       ],
-      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/states (o CLI instala junto, na branch padrão). Os dados são props e o pai os atualiza: <JobsPanel jobs status onReload filter onFilterChange onRetry onCancel />. Job: { id, name, status, progress?, queuedAt?, startedAt?, finishedAt?, error?, log? } com instantes em Date, ms ou ISO. Retry aparece em failed e cancelled; cancelar em queued e running, só se o callback existir. O log segue o fim enquanto a pessoa não rolar para cima. Texto sobrescrevível por labels."
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui-library/states (o CLI instala junto, na branch padrão). Os dados são props e o pai os atualiza: <JobsPanel jobs status onReload filter onFilterChange onRetry onCancel />. Job: { id, name, status, progress?, queuedAt?, startedAt?, finishedAt?, error?, log? } com instantes em Date, ms ou ISO. Retry aparece em failed e cancelled; cancelar em queued e running, só se o callback existir. O log segue o fim enquanto a pessoa não rolar para cima. Texto sobrescrevível por labels."
     }
   ]
 }

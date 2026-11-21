@@ -213,7 +213,7 @@ export function FileUpload<Result = unknown>({
                         aria-label={labels.cancel(name)}
                         onClick={() => queue.cancel(item.id)}
                       >
-                        <Icons.stop />
+                        <Icons.close />
                       </Button>
                     ) : null}
                     {item.status === "error" || item.status === "cancelled" ? (

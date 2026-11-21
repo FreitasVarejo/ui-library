@@ -2,9 +2,9 @@
 
 Antes de escrever componente ou seção de tela, procure o que já existe:
 
-1. Registry `FreitasVarejo/ui` (blocos e temas): `npx shadcn@latest list FreitasVarejo/ui`.
-   Detalhe de um item: `npx shadcn@latest view FreitasVarejo/ui/<item>`.
-   Instalar: `npx shadcn@latest add FreitasVarejo/ui/<item>`.
+1. Registry `FreitasVarejo/ui-library` (blocos e temas): `npx shadcn@latest list FreitasVarejo/ui-library`.
+   Detalhe de um item: `npx shadcn@latest view FreitasVarejo/ui-library/<item>`.
+   Instalar: `npx shadcn@latest add FreitasVarejo/ui-library/<item>`.
 2. Componentes do shadcn: `npx shadcn@latest search @shadcn -q <termo>`, depois
    `npx shadcn@latest add <nome>`.
 3. Só escreva do zero o que nenhum dos dois cobre, compondo componentes do shadcn.
@@ -33,6 +33,6 @@ Identidade visual:
 - Os blocos usam `@/lib/icons`, que o tema instala: instale um `theme-<nome>`
   antes do primeiro bloco.
 - Trocar a identidade é instalar outro tema por cima:
-  `npx shadcn@latest add FreitasVarejo/ui/theme-<nome> --overwrite`.
+  `npx shadcn@latest add FreitasVarejo/ui-library/theme-<nome> --overwrite`.
 - Criar uma identidade nova é gerar o `theme-<nome>` no repositório da
-  biblioteca (`github.com/FreitasVarejo/ui`, veja o `AGENTS.md` dele).
+  biblioteca (`github.com/FreitasVarejo/ui-library`, veja o `AGENTS.md` dele).

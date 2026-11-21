@@ -43,7 +43,7 @@ export function App() {
       <header className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-heading text-xl font-semibold">
-            FreitasVarejo/ui
+            FreitasVarejo/ui-library
           </h1>
           <div className="flex flex-wrap items-center gap-3 text-sm">
             <label className="flex items-center gap-2">

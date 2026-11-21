@@ -13,7 +13,7 @@
         "label",
         "select",
         "sheet",
-        "FreitasVarejo/ui/states"
+        "FreitasVarejo/ui-library/states"
       ],
       "files": [
         {
@@ -47,7 +47,7 @@
           "target": "@components/search-results/index.ts"
         }
       ],
-      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/states (o CLI instala junto, na branch padrão). Quem busca é o pai: <SearchResults query onSearch status results total facets selectedFacets onFacetsChange sort onSortChange linkComponent />. Destaque: cada resultado traz highlights=[[início, fim], ...] em unidades UTF-16 de snippet (e titleHighlights de title); o texto nunca vira HTML. Texto sobrescrevível por labels."
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui-library/states (o CLI instala junto, na branch padrão). Quem busca é o pai: <SearchResults query onSearch status results total facets selectedFacets onFacetsChange sort onSortChange linkComponent />. Destaque: cada resultado traz highlights=[[início, fim], ...] em unidades UTF-16 de snippet (e titleHighlights de title); o texto nunca vira HTML. Texto sobrescrevível por labels."
     }
   ]
 }

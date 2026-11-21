@@ -5,7 +5,7 @@
       "name": "agent-kit",
       "type": "registry:item",
       "title": "Agent kit",
-      "description": "Regra para o agente (.claude/rules/ui-library.md): procurar no registry FreitasVarejo/ui e nos componentes do shadcn antes de escrever UI, usar só tokens e ícones de @/lib/icons.",
+      "description": "Regra para o agente (.claude/rules/ui-library.md): procurar no registry FreitasVarejo/ui-library e nos componentes do shadcn antes de escrever UI, usar só tokens e ícones de @/lib/icons.",
       "files": [
         {
           "path": "ui-library.md",

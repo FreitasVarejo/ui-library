@@ -1,7 +1,7 @@
 # ui
 
 Biblioteca pessoal de blocos React distribuída como registry do shadcn/ui
-(Base UI, Tailwind v4, Vite + React + TS). Endereço: `github.com/FreitasVarejo/ui`.
+(Base UI, Tailwind v4, Vite + React + TS). Endereço: `github.com/FreitasVarejo/ui-library`.
 
 - **Vitrine**: `npm run dev`. App Vite que renderiza cada item em cada estado,
   importando de `registry/` (fonte única), com seletor de tema e claro/escuro.
@@ -25,8 +25,8 @@ Biblioteca pessoal de blocos React distribuída como registry do shadcn/ui
     por prop.
   - Cor, raio, sombra e espaçamento só por token; ícone só de `@/lib/icons`.
   - Componentes do shadcn entram por nome em `registryDependencies`.
-  - Dependência entre itens deste registry: só `FreitasVarejo/ui/states` e
-    `FreitasVarejo/ui/feedback`, sem `#ref`, e o bloco importa deles por
+  - Dependência entre itens deste registry: só `FreitasVarejo/ui-library/states` e
+    `FreitasVarejo/ui-library/feedback`, sem `#ref`, e o bloco importa deles por
     `@/components/states` e `@/components/feedback` (a vitrine mapeia os dois
     para `registry/`). Item de tema nunca é dependência: escreve `icons.ts`. O
     `consume.sh` vigia as duas coisas pelo plano do `add --dry-run`.

@@ -19,7 +19,7 @@
         "select",
         "sheet",
         "textarea",
-        "FreitasVarejo/ui/feedback"
+        "FreitasVarejo/ui-library/feedback"
       ],
       "files": [
         {
@@ -38,7 +38,7 @@
           "target": "@components/entity-form/index.ts"
         }
       ],
-      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/feedback (o CLI o instala junto, na branch padrão). Exemplo: <EntityForm schema={zodSchema} defaultValues fields onSubmit title presentation=\"sheet\" open onOpenChange />. Use key=<id> para trocar de registro. Texto sobrescrevível por labels."
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui-library/feedback (o CLI o instala junto, na branch padrão). Exemplo: <EntityForm schema={zodSchema} defaultValues fields onSubmit title presentation=\"sheet\" open onOpenChange />. Use key=<id> para trocar de registro. Texto sobrescrevível por labels."
     }
   ]
 }

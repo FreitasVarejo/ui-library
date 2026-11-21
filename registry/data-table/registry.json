@@ -15,8 +15,8 @@
         "input",
         "select",
         "table",
-        "FreitasVarejo/ui/states",
-        "FreitasVarejo/ui/feedback"
+        "FreitasVarejo/ui-library/states",
+        "FreitasVarejo/ui-library/feedback"
       ],
       "files": [
         {
@@ -80,7 +80,7 @@
           "target": "@components/data-table/index.ts"
         }
       ],
-      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/states e FreitasVarejo/ui/feedback (o CLI os instala junto, na branch padrão). Colunas: createColumnHelper<DataTableFeatures, Linha>() do @tanstack/react-table; header em texto ganha ordenação sozinho. Modo client: <DataTable columns data facets bulkActions />. Modo server: mode=\"server\" com rowCount e sorting, search, facetFilters, pagination controlados por props + callbacks. Densidade: vem do --spacing do tema. Texto sobrescrevível por labels."
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui-library/states e FreitasVarejo/ui-library/feedback (o CLI os instala junto, na branch padrão). Colunas: createColumnHelper<DataTableFeatures, Linha>() do @tanstack/react-table; header em texto ganha ordenação sozinho. Modo client: <DataTable columns data facets bulkActions />. Modo server: mode=\"server\" com rowCount e sorting, search, facetFilters, pagination controlados por props + callbacks. Densidade: vem do --spacing do tema. Texto sobrescrevível por labels."
     }
   ]
 }

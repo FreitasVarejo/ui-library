@@ -1,10 +1,10 @@
 // Pré-carga (node --import) que serve este repo como se fosse
-// github.com/FreitasVarejo/ui, sem push. Cobre o que o CLI do shadcn lê de um
+// github.com/FreitasVarejo/ui-library, sem push. Cobre o que o CLI do shadcn lê de um
 // registry no modo GitHub anônimo:
-//   - resolução de ref: `git ls-remote https://github.com/FreitasVarejo/ui.git`
+//   - resolução de ref: `git ls-remote https://github.com/FreitasVarejo/ui-library.git`
 //     (o consume.sh redireciona a URL para o repo local com GIT_CONFIG_*);
 //   - leitura de arquivo: fetch de
-//     https://raw.githubusercontent.com/FreitasVarejo/ui/<sha>/<caminho>,
+//     https://raw.githubusercontent.com/FreitasVarejo/ui-library/<sha>/<caminho>,
 //     que aqui sai da árvore de trabalho em FAKE_GITHUB_ROOT (inclui o que
 //     ainda não foi commitado).
 // Qualquer outro fetch passa para o fetch real.
@@ -12,7 +12,7 @@ import { readFile } from "node:fs/promises"
 import { join, normalize } from "node:path"
 
 const root = process.env.FAKE_GITHUB_ROOT
-const prefix = "https://raw.githubusercontent.com/FreitasVarejo/ui/"
+const prefix = "https://raw.githubusercontent.com/FreitasVarejo/ui-library/"
 
 if (root) {
   const realFetch = globalThis.fetch

@@ -10,8 +10,8 @@
         "button",
         "dropdown-menu",
         "tabs",
-        "FreitasVarejo/ui/states",
-        "FreitasVarejo/ui/feedback"
+        "FreitasVarejo/ui-library/states",
+        "FreitasVarejo/ui-library/feedback"
       ],
       "files": [
         {
@@ -30,7 +30,7 @@
           "target": "@components/detail-page/index.ts"
         }
       ],
-      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/states e FreitasVarejo/ui/feedback (o CLI os instala junto, na branch padrão). Exemplo: <DetailPage title badges summary primaryAction secondaryActions destructiveAction tabs metadata linkComponent />. Abas controláveis por tab + onTabChange (para pôr a aba na URL). Texto sobrescrevível por labels."
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui-library/states e FreitasVarejo/ui-library/feedback (o CLI os instala junto, na branch padrão). Exemplo: <DetailPage title badges summary primaryAction secondaryActions destructiveAction tabs metadata linkComponent />. Abas controláveis por tab + onTabChange (para pôr a aba na URL). Texto sobrescrevível por labels."
     }
   ]
 }

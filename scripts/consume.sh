@@ -5,10 +5,10 @@
 #   KEEP=1 scripts/consume.sh     mantém o projeto e imprime o caminho
 #
 # O CLI do shadcn lê um registry GitHub resolvendo a ref com `git ls-remote
-# https://github.com/FreitasVarejo/ui.git` e buscando os arquivos em
+# https://github.com/FreitasVarejo/ui-library.git` e buscando os arquivos em
 # raw.githubusercontent.com. Aqui os dois são desviados para este checkout
 # (GIT_CONFIG_* e scripts/fake-github.mjs): é o mesmo caminho de código do CLI,
-# com os endereços `FreitasVarejo/ui/<item>` de verdade, lendo a árvore de
+# com os endereços `FreitasVarejo/ui-library/<item>` de verdade, lendo a árvore de
 # trabalho. Precisa de rede para o npm (scaffold do Vite e dependências).
 set -euo pipefail
 
@@ -30,7 +30,7 @@ export FAKE_GITHUB_ROOT="$REPO"
 export NODE_OPTIONS="--import $REPO/scripts/fake-github.mjs ${NODE_OPTIONS:-}"
 export GIT_CONFIG_COUNT=1
 export GIT_CONFIG_KEY_0="url.$REPO.insteadOf"
-export GIT_CONFIG_VALUE_0="https://github.com/FreitasVarejo/ui.git"
+export GIT_CONFIG_VALUE_0="https://github.com/FreitasVarejo/ui-library.git"
 export CI=1
 
 step() { printf '\n== %s\n' "$*"; }
@@ -44,8 +44,8 @@ expect_not() { # arquivo, texto
 }
 
 step "registry GitHub: validate e list"
-run "$SHADCN" registry validate FreitasVarejo/ui
-LIST="$(cd "$WORK" && timeout 120 "$SHADCN" list FreitasVarejo/ui </dev/null)"
+run "$SHADCN" registry validate FreitasVarejo/ui-library
+LIST="$(cd "$WORK" && timeout 120 "$SHADCN" list FreitasVarejo/ui-library </dev/null)"
 for item in agent-kit app-shell command-palette data-table detail-page entity-form feedback file-upload jobs-panel search-results states theme-default theme-editorial; do
   grep -q "$item" <<<"$LIST" || { echo "FALHOU: list não mostra $item"; echo "$LIST"; exit 1; }
 done
@@ -67,7 +67,7 @@ OWN_DIRS='(states|feedback|app-shell|data-table|search-results|detail-page|entit
 # arquivo NOSSO pode aparecer como "overwrite"; só então instala com --overwrite.
 install() { # itens deste registry
   local args=() item
-  for item in "$@"; do args+=("FreitasVarejo/ui/$item"); done
+  for item in "$@"; do args+=("FreitasVarejo/ui-library/$item"); done
   local plan
   plan="$(timeout 120 "$SHADCN" add "${args[@]}" -y --dry-run </dev/null 2>&1)" || {
     echo "$plan"; echo "FALHOU: dry-run de $*"; exit 1
@@ -80,8 +80,8 @@ install() { # itens deste registry
 }
 
 step "tema default, agent-kit e blocos independentes"
-run "$SHADCN" add FreitasVarejo/ui/theme-default -y
-run "$SHADCN" add FreitasVarejo/ui/agent-kit -y
+run "$SHADCN" add FreitasVarejo/ui-library/theme-default -y
+run "$SHADCN" add FreitasVarejo/ui-library/agent-kit -y
 install app-shell states feedback
 test -f .claude/rules/ui-library.md
 test -f src/components/app-shell/app-shell.tsx
@@ -99,7 +99,7 @@ expect src/index.css '--chart-5:'
 expect package.json '"@fontsource-variable/inter"'
 
 step "dependência entre itens: o projeto já tem states e feedback"
-# Os blocos de dados dependem de FreitasVarejo/ui/states e /feedback. Com os dois
+# Os blocos de dados dependem de FreitasVarejo/ui-library/states e /feedback. Com os dois
 # já instalados e iguais, o CLI não pergunta nada e instala só o que falta.
 cp src/components/states/empty-state.tsx "$WORK/empty-state.before"
 install data-table jobs-panel
@@ -142,7 +142,7 @@ run npm run build
 echo "typecheck e build com theme-default: ok"
 
 step "trocar a identidade: theme-editorial por cima"
-run "$SHADCN" add FreitasVarejo/ui/theme-editorial -y --overwrite
+run "$SHADCN" add FreitasVarejo/ui-library/theme-editorial -y --overwrite
 expect src/lib/icons.ts '@phosphor-icons/react'
 expect_not src/lib/icons.ts 'lucide-react'
 expect src/index.css '--primary: oklch(0.455 0.171 13.697)'
@@ -172,17 +172,17 @@ step "states divergente no consumidor: o CLI pergunta; sem TTY sai 0 sem instala
 echo "// editado pelo consumidor" >>src/components/states/empty-state.tsx
 rm src/components/data-table/index.ts
 set +e
-timeout 120 "$SHADCN" add FreitasVarejo/ui/data-table -y </dev/null >>"$LOG" 2>&1
+timeout 120 "$SHADCN" add FreitasVarejo/ui-library/data-table -y </dev/null >>"$LOG" 2>&1
 code=$?
 set -e
 test "$code" -eq 0
 test ! -f src/components/data-table/index.ts || { echo "FALHOU: o CLI instalou apesar do arquivo divergente"; exit 1; }
 expect src/components/states/empty-state.tsx "editado pelo consumidor"
 # --dry-run mostra o que mudaria sem gravar; --overwrite resolve de propósito.
-PLAN="$("$SHADCN" add FreitasVarejo/ui/data-table -y --dry-run </dev/null 2>&1)"
+PLAN="$("$SHADCN" add FreitasVarejo/ui-library/data-table -y --dry-run </dev/null 2>&1)"
 grep -qE "~ src/components/states/empty-state.tsx" <<<"$PLAN" || { echo "$PLAN"; echo "FALHOU: o plano não aponta o states divergente"; exit 1; }
 test ! -f src/components/data-table/index.ts
-run "$SHADCN" add FreitasVarejo/ui/data-table -y --overwrite
+run "$SHADCN" add FreitasVarejo/ui-library/data-table -y --overwrite
 test -f src/components/data-table/index.ts
 expect_not src/components/states/empty-state.tsx "editado pelo consumidor"
 run npx tsc -b

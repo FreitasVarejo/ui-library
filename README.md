@@ -5,13 +5,13 @@ shadcn/ui.
 
 ```bash
 npx shadcn@latest init -t vite -b base
-npx shadcn@latest add FreitasVarejo/ui/theme-default
-npx shadcn@latest add FreitasVarejo/ui/app-shell FreitasVarejo/ui/states FreitasVarejo/ui/feedback
-npx shadcn@latest add FreitasVarejo/ui/agent-kit
-npx shadcn@latest add FreitasVarejo/ui/data-table FreitasVarejo/ui/search-results FreitasVarejo/ui/detail-page FreitasVarejo/ui/entity-form
-npx shadcn@latest add FreitasVarejo/ui/file-upload FreitasVarejo/ui/jobs-panel FreitasVarejo/ui/command-palette
+npx shadcn@latest add FreitasVarejo/ui-library/theme-default
+npx shadcn@latest add FreitasVarejo/ui-library/app-shell FreitasVarejo/ui-library/states FreitasVarejo/ui-library/feedback
+npx shadcn@latest add FreitasVarejo/ui-library/agent-kit
+npx shadcn@latest add FreitasVarejo/ui-library/data-table FreitasVarejo/ui-library/search-results FreitasVarejo/ui-library/detail-page FreitasVarejo/ui-library/entity-form
+npx shadcn@latest add FreitasVarejo/ui-library/file-upload FreitasVarejo/ui-library/jobs-panel FreitasVarejo/ui-library/command-palette
 ```
 
-`npx shadcn@latest list FreitasVarejo/ui` mostra os itens. Para trocar a
-identidade: `npx shadcn@latest add FreitasVarejo/ui/theme-editorial --overwrite`.
+`npx shadcn@latest list FreitasVarejo/ui-library` mostra os itens. Para trocar a
+identidade: `npx shadcn@latest add FreitasVarejo/ui-library/theme-editorial --overwrite`.
 Contrato do repositório: `AGENTS.md`.

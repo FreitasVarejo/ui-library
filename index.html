@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR" data-brand="default">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FreitasVarejo/ui</title>
+    <script>
+      // Aplica marca e modo antes do primeiro quadro, para não piscar.
+      try {
+        var params = new URLSearchParams(location.search)
+        var root = document.documentElement
+        root.dataset.brand = params.get("brand") || "default"
+        if (params.get("mode") === "dark") root.classList.add("dark")
+      } catch (error) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

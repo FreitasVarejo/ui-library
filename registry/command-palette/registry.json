@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "command-palette",
+      "type": "registry:block",
+      "title": "Paleta de comandos",
+      "description": "Paleta sobre o command do shadcn (cmdk) em diálogo: abre com Ctrl/Cmd+K (atalho configurável) e por gatilho, grupos por props (navegação, ações, recentes) com ícone e atalho exibido, busca assíncrona opcional com carregando e vazio, navegação por teclado.",
+      "dependencies": ["cmdk@^1"],
+      "registryDependencies": ["button", "command", "dialog"],
+      "files": [
+        {
+          "path": "command-palette.tsx",
+          "type": "registry:component",
+          "target": "@components/command-palette/command-palette.tsx"
+        },
+        {
+          "path": "filter.ts",
+          "type": "registry:component",
+          "target": "@components/command-palette/filter.ts"
+        },
+        {
+          "path": "shortcut.ts",
+          "type": "registry:component",
+          "target": "@components/command-palette/shortcut.ts"
+        },
+        {
+          "path": "types.ts",
+          "type": "registry:component",
+          "target": "@components/command-palette/types.ts"
+        },
+        {
+          "path": "use-controllable.ts",
+          "type": "registry:component",
+          "target": "@components/command-palette/use-controllable.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/command-palette/index.ts"
+        }
+      ],
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. <CommandPalette groups={[{ id, heading, items: [{ id, label, icon, shortcut, onSelect }] }]} trigger={<CommandPaletteTrigger />} search={(query, { signal }) => Promise<itens>} shortcut=\"mod+k\" />. Para pôr o gatilho no cabeçalho do app-shell, passe a paleta em actions: <AppShell actions={<CommandPalette ... />}>. O atalho de cada item é só exibido; quem navega é o onSelect. Texto sobrescrevível por labels."
+    }
+  ]
+}

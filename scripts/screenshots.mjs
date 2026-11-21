@@ -1,7 +1,8 @@
 // Screenshots da vitrine: cada item, em cada tema, claro e escuro, em largura
 // desktop e celular. Também confere o que só um navegador mostra (foco do
 // diálogo, Sheet no celular, barra lateral recolhida, estouro horizontal,
-// erros de console). Saída: .screenshots/ (no .gitignore).
+// erros de console, paleta de comandos que abre com o atalho e foca a busca,
+// fila de envios e log que segue o fim). Saída: .screenshots/ (no .gitignore).
 //
 //   npm run screenshots
 //   npm run screenshots -- --consumer /caminho/do/projeto   (também fotografa
@@ -127,6 +128,24 @@ for (const brand of brands) {
           }
         )
       }
+      // paleta de comandos no cabeçalho: abre com o atalho e foca a busca
+      check(
+        (await page.getByRole("dialog").count()) === 0,
+        `${tag}: paleta aberta sem acionar`
+      )
+      await page.keyboard.press("Control+k")
+      await page.getByRole("dialog").waitFor()
+      await page.waitForTimeout(250)
+      check(
+        await page
+          .getByRole("combobox")
+          .evaluate((element) => element === document.activeElement),
+        `${tag}: a paleta não focou o campo de busca ao abrir`
+      )
+      await noOverflow(page, `${tag} app-shell com a paleta`)
+      await shot(page, `${tag}--app-shell-palette`)
+      await page.keyboard.press("Escape")
+      await page.getByRole("dialog").waitFor({ state: "detached" })
       await page.getByRole("button", { name: "Menu do usuário" }).click()
       await page.getByRole("menuitem", { name: "Sair" }).waitFor()
       await page.waitForTimeout(200)
@@ -347,6 +366,183 @@ for (const brand of brands) {
         `${tag}: o Sheet fechou apesar das alterações`
       )
       await shot(page, `${tag}--entity-form-sheet-discard`)
+      await page.close()
+
+      // file-upload: validação por arquivo, fila com limite, erro, cancelar
+      page = await open(context, `${tag} file-upload`, {
+        ...common,
+        item: "file-upload",
+      })
+      await noOverflow(page, `${tag} file-upload`)
+      const upload = page.locator('[data-slot="file-upload"]').first()
+      const fileInput = upload.locator('input[type="file"]')
+      let reached = false
+      for (let step = 0; step < 40 && !reached; step++) {
+        await page.keyboard.press("Tab")
+        reached = await fileInput.evaluate(
+          (element) => element === document.activeElement
+        )
+      }
+      check(reached, `${tag}: o teclado (Tab) não chega ao campo de arquivo`)
+      const bytes = (kb) => Buffer.alloc(kb * 1024, "x")
+      await fileInput.setInputFiles([
+        {
+          name: "contrato.pdf",
+          mimeType: "application/pdf",
+          buffer: bytes(120),
+        },
+        {
+          name: "ata-erro.pdf",
+          mimeType: "application/pdf",
+          buffer: bytes(80),
+        },
+        {
+          name: "manual.docx",
+          mimeType: "application/octet-stream",
+          buffer: bytes(300),
+        },
+        { name: "planta.png", mimeType: "image/png", buffer: bytes(50) },
+        {
+          name: "instalador.exe",
+          mimeType: "application/octet-stream",
+          buffer: bytes(10),
+        },
+        {
+          name: "video-grande.pdf",
+          mimeType: "application/pdf",
+          buffer: bytes(3 * 1024),
+        },
+      ])
+      await upload
+        .getByText("Tipo não aceito. Use: .pdf, .docx, .png.")
+        .waitFor()
+      await upload.getByText(/O máximo é 2 MB|o máximo é 2 MB/).waitFor()
+      check(
+        (await upload.getByRole("listitem").count()) === 6,
+        `${tag}: esperava 6 itens na fila`
+      )
+      await upload.getByRole("progressbar").first().waitFor()
+      check(
+        (await upload.getByRole("progressbar").count()) === 2,
+        `${tag}: esperava 2 envios simultâneos (limite 2)`
+      )
+      check(
+        (await upload.getByText("Aguardando", { exact: true }).count()) === 2,
+        `${tag}: esperava 2 arquivos aguardando`
+      )
+      await page.waitForTimeout(500)
+      await shot(page, `${tag}--file-upload-uploading`, { fullPage: true })
+      await upload
+        .getByText("O servidor recusou o arquivo.")
+        .waitFor({ timeout: 15000 })
+      await upload
+        .getByRole("button", { name: "Tentar de novo ata-erro.pdf" })
+        .waitFor()
+      await upload
+        .locator('[data-status="done"]')
+        .nth(2)
+        .waitFor({ timeout: 20000 })
+      await noOverflow(page, `${tag} file-upload com a fila`)
+      await shot(page, `${tag}--file-upload-done`, { fullPage: true })
+      await upload
+        .getByRole("button", { name: "Tentar de novo ata-erro.pdf" })
+        .click()
+      await upload
+        .getByRole("button", { name: "Cancelar o envio de ata-erro.pdf" })
+        .click()
+      await upload.locator('[data-status="cancelled"]').waitFor()
+      await shot(page, `${tag}--file-upload-cancelled`, { fullPage: true })
+      await page.close()
+
+      // jobs-panel: filtro com contagem, log que segue o fim, rolar para cima
+      page = await open(context, `${tag} jobs-panel`, {
+        ...common,
+        item: "jobs-panel",
+      })
+      await noOverflow(page, `${tag} jobs-panel`)
+      const panel = page.locator('[data-slot="jobs-panel"]').first()
+      const rows = panel.locator('[data-slot="job-row"]')
+      check((await rows.count()) === 6, `${tag}: esperava 6 jobs`)
+      await panel.getByRole("button", { name: /^Falhou\s*1$/ }).click()
+      check(
+        (await rows.count()) === 1,
+        `${tag}: o filtro Falhou devia deixar 1 job`
+      )
+      await panel.getByRole("button", { name: /^Todos\s*6$/ }).click()
+      await shot(page, `${tag}--jobs-panel`, { fullPage: true })
+      await panel.getByRole("button", { name: "Ver log" }).first().click()
+      const log = panel.getByRole("region", { name: /^Log do job/ }).first()
+      await log.waitFor()
+      const atEnd = () =>
+        log.evaluate(
+          (element) =>
+            element.scrollHeight - element.scrollTop - element.clientHeight <= 8
+        )
+      check(await atEnd(), `${tag}: o log não abriu no fim`)
+      await noOverflow(page, `${tag} jobs-panel com o log`)
+      await shot(page, `${tag}--jobs-panel-log`, { fullPage: true })
+      await log.evaluate((element) => {
+        element.scrollTop = 0
+        element.dispatchEvent(new Event("scroll"))
+      })
+      await page.getByRole("button", { name: "Simular andamento" }).click()
+      await page.waitForTimeout(2200)
+      check(
+        (await log.evaluate((element) => element.scrollTop)) === 0,
+        `${tag}: o log foi puxado para o fim depois de a pessoa rolar para cima`
+      )
+      await panel.getByRole("button", { name: "Ir para o fim" }).click()
+      await page.waitForTimeout(100)
+      check(await atEnd(), `${tag}: "Ir para o fim" não levou ao fim do log`)
+      await page.close()
+
+      // command-palette: atalho, foco, filtro, carregando, erro, resultado, teclado
+      page = await open(context, `${tag} command-palette`, {
+        ...common,
+        item: "command-palette",
+      })
+      await noOverflow(page, `${tag} command-palette`)
+      check(
+        (await page.getByRole("dialog").count()) === 0,
+        `${tag}: paleta aberta sem acionar`
+      )
+      await page.keyboard.press("Control+k")
+      const palette = page.getByRole("dialog")
+      await palette.waitFor()
+      await page.waitForTimeout(250)
+      const searchField = page.getByRole("combobox")
+      check(
+        await searchField.evaluate(
+          (element) => element === document.activeElement
+        ),
+        `${tag}: a paleta não focou o campo de busca ao abrir`
+      )
+      await noOverflow(page, `${tag} command-palette aberta`)
+      await shot(page, `${tag}--command-palette`)
+      await page.keyboard.type("lento")
+      await palette.getByText("Buscando…").waitFor()
+      await shot(page, `${tag}--command-palette-loading`)
+      await searchField.fill("falha")
+      await palette.getByText("Não foi possível buscar agora.").waitFor()
+      await searchField.fill("zeppelin")
+      await palette.getByText("Nada encontrado.").waitFor()
+      await shot(page, `${tag}--command-palette-empty`)
+      await searchField.fill("ata")
+      await palette.getByText("Resultados", { exact: true }).waitFor()
+      check(
+        (await palette.getByRole("option").count()) >= 1,
+        `${tag}: busca assíncrona sem resultado`
+      )
+      await shot(page, `${tag}--command-palette-results`)
+      await page.keyboard.press("ArrowDown")
+      await page.keyboard.press("Enter")
+      await palette.waitFor({ state: "detached" })
+      await page.getByText(/Último comando: /).waitFor()
+      // pelo gatilho, e Esc fecha
+      await page.getByRole("button", { name: "Buscar" }).click()
+      await palette.waitFor()
+      await page.keyboard.press("Escape")
+      await palette.waitFor({ state: "detached" })
       await page.close()
       await context.close()
     }

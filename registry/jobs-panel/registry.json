@@ -1,0 +1,56 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "jobs-panel",
+      "type": "registry:block",
+      "title": "Painel de jobs",
+      "description": "Lista de jobs com status (na fila, rodando com progresso, concluído, falhou, cancelado), filtro por status com contagem, início e duração relativos, ações por job por callback e log expansível (mono, rolagem que segue o fim, copiar). Estados de carregando, vazio e erro.",
+      "registryDependencies": [
+        "badge",
+        "button",
+        "collapsible",
+        "progress",
+        "FreitasVarejo/ui/states"
+      ],
+      "files": [
+        {
+          "path": "jobs-panel.tsx",
+          "type": "registry:component",
+          "target": "@components/jobs-panel/jobs-panel.tsx"
+        },
+        {
+          "path": "job-row.tsx",
+          "type": "registry:component",
+          "target": "@components/jobs-panel/job-row.tsx"
+        },
+        {
+          "path": "log-viewer.tsx",
+          "type": "registry:component",
+          "target": "@components/jobs-panel/log-viewer.tsx"
+        },
+        {
+          "path": "format.ts",
+          "type": "registry:component",
+          "target": "@components/jobs-panel/format.ts"
+        },
+        {
+          "path": "types.ts",
+          "type": "registry:component",
+          "target": "@components/jobs-panel/types.ts"
+        },
+        {
+          "path": "use-controllable.ts",
+          "type": "registry:component",
+          "target": "@components/jobs-panel/use-controllable.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/jobs-panel/index.ts"
+        }
+      ],
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/states (o CLI instala junto, na branch padrão). Os dados são props e o pai os atualiza: <JobsPanel jobs status onReload filter onFilterChange onRetry onCancel />. Job: { id, name, status, progress?, queuedAt?, startedAt?, finishedAt?, error?, log? } com instantes em Date, ms ou ISO. Retry aparece em failed e cancelled; cancelar em queued e running, só se o callback existir. O log segue o fim enquanto a pessoa não rolar para cima. Texto sobrescrevível por labels."
+    }
+  ]
+}

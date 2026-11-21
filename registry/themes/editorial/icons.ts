@@ -37,6 +37,10 @@ import {
   CaretRight as CaretRightIcon,
   DotsThree as DotsThreeIcon,
   PencilSimple as PencilSimpleIcon,
+  Clock as ClockIcon,
+  Stop as StopIcon,
+  Copy as CopyIcon,
+  Terminal as TerminalIcon,
 } from "@phosphor-icons/react"
 
 export const Icons = {
@@ -75,6 +79,10 @@ export const Icons = {
   chevronRight: CaretRightIcon,
   more: DotsThreeIcon,
   edit: PencilSimpleIcon,
+  clock: ClockIcon,
+  stop: StopIcon,
+  copy: CopyIcon,
+  terminal: TerminalIcon,
 } as const
 
 export type IconName = keyof typeof Icons

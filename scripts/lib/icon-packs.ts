@@ -38,6 +38,10 @@ export const ICON_KEYS = [
   "chevronRight",
   "more",
   "edit",
+  "clock",
+  "stop",
+  "copy",
+  "terminal",
 ] as const
 
 export type IconKey = (typeof ICON_KEYS)[number]
@@ -92,6 +96,10 @@ export const ICON_PACKS: Record<IconPackName, IconPack> = {
       chevronRight: "ChevronRight",
       more: "Ellipsis",
       edit: "Pencil",
+      clock: "Clock",
+      stop: "Square",
+      copy: "Copy",
+      terminal: "Terminal",
     },
   },
   phosphor: {
@@ -133,6 +141,10 @@ export const ICON_PACKS: Record<IconPackName, IconPack> = {
       chevronRight: "CaretRight",
       more: "DotsThree",
       edit: "PencilSimple",
+      clock: "Clock",
+      stop: "Stop",
+      copy: "Copy",
+      terminal: "Terminal",
     },
   },
   tabler: {
@@ -174,6 +186,10 @@ export const ICON_PACKS: Record<IconPackName, IconPack> = {
       chevronRight: "IconChevronRight",
       more: "IconDots",
       edit: "IconPencil",
+      clock: "IconClock",
+      stop: "IconPlayerStop",
+      copy: "IconCopy",
+      terminal: "IconTerminal2",
     },
   },
 }

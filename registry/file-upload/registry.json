@@ -1,0 +1,40 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "file-upload",
+      "type": "registry:block",
+      "title": "Envio de arquivos",
+      "description": "Dropzone (arrastar e clicar, acessível por teclado), validação de tipo e tamanho com mensagem por arquivo, fila com estado por arquivo (aguardando, enviando com %, concluído, erro, cancelado), cancelar, tentar de novo, remover e limite de envios simultâneos. O envio é injetado por prop.",
+      "registryDependencies": ["button", "progress"],
+      "files": [
+        {
+          "path": "file-upload.tsx",
+          "type": "registry:component",
+          "target": "@components/file-upload/file-upload.tsx"
+        },
+        {
+          "path": "use-upload-queue.ts",
+          "type": "registry:component",
+          "target": "@components/file-upload/use-upload-queue.ts"
+        },
+        {
+          "path": "validate.ts",
+          "type": "registry:component",
+          "target": "@components/file-upload/validate.ts"
+        },
+        {
+          "path": "types.ts",
+          "type": "registry:component",
+          "target": "@components/file-upload/types.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/file-upload/index.ts"
+        }
+      ],
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. O bloco não faz requisição: <FileUpload upload={(file, { onProgress, signal }) => Promise} accept={['.pdf', 'image/*']} maxSize={bytes} concurrency={2} onUploaded />. Repasse signal ao fetch/XHR para o cancelar valer de verdade e chame onProgress(0..100). Anúncio para leitor de tela: entrada de arquivos e fim da fila, nunca cada %. Texto sobrescrevível por labels. useUploadQueue serve para montar outra interface sobre a mesma fila."
+    }
+  ]
+}

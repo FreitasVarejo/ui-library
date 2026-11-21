@@ -19,11 +19,17 @@ import {
 } from "@/components/ui/table"
 import { AppShell } from "@registry/app-shell/app-shell"
 import type { NavGroup } from "@registry/app-shell/types"
+import {
+  CommandPalette,
+  CommandPaletteTrigger,
+} from "@registry/command-palette/command-palette"
+import type { CommandPaletteGroup } from "@registry/command-palette/types"
 import { EmptyState } from "@registry/states/empty-state"
 import { ErrorState } from "@registry/states/error-state"
 import { ForbiddenState } from "@registry/states/forbidden-state"
 import { LoadingState } from "@registry/states/loading-state"
 import { Icons } from "@/lib/icons"
+import { DOCUMENTS } from "./demo-data"
 import { useParams } from "./store"
 
 // Link injetado no AppShell: troca a "rota" em memória em vez de navegar,
@@ -141,6 +147,55 @@ function Content({ path }: { path: string }) {
   )
 }
 
+/** Paleta do cabeçalho: navegação troca a “rota” em memória; a busca olha os documentos. */
+function ShellPalette({ navigate }: { navigate: (path: string) => void }) {
+  const groups: CommandPaletteGroup[] = [
+    {
+      id: "nav",
+      heading: "Navegação",
+      items: Object.entries(PAGES).map(([path, page]) => ({
+        id: path,
+        label: `Ir para ${page.title.toLowerCase()}`,
+        icon: path === "/jobs" ? <Icons.list /> : <Icons.folder />,
+        onSelect: () => navigate(path),
+      })),
+    },
+    {
+      id: "actions",
+      heading: "Ações",
+      items: [
+        {
+          id: "upload",
+          label: "Enviar arquivos",
+          icon: <Icons.upload />,
+          shortcut: "U",
+          onSelect: () => navigate("/uploads"),
+        },
+      ],
+    },
+  ]
+  return (
+    <CommandPalette
+      groups={groups}
+      trigger={<CommandPaletteTrigger />}
+      search={async (query) => {
+        await new Promise((resolve) => setTimeout(resolve, 300))
+        const needle = query.toLowerCase()
+        return DOCUMENTS.filter((doc) =>
+          doc.title.toLowerCase().includes(needle)
+        )
+          .slice(0, 5)
+          .map((doc) => ({
+            id: doc.id,
+            label: doc.title,
+            icon: <Icons.file />,
+            onSelect: () => navigate("/library"),
+          }))
+      }}
+    />
+  )
+}
+
 /** Tela cheia com o AppShell, para o iframe da vitrine e os screenshots. */
 export function ShellPreview() {
   const params = useParams()
@@ -171,6 +226,7 @@ export function ShellPreview() {
           { label: "Perfil", icon: <Icons.user />, href: "/settings" },
           { label: "Sair", icon: <Icons.logout />, destructive: true },
         ]}
+        actions={<ShellPalette navigate={setPath} />}
         defaultOpen={params.get("collapsed") !== "1"}
       >
         <h1 className="font-heading text-xl font-semibold">{page.title}</h1>

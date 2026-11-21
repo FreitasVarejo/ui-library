@@ -46,7 +46,7 @@ expect_not() { # arquivo, texto
 step "registry GitHub: validate e list"
 run "$SHADCN" registry validate FreitasVarejo/ui
 LIST="$(cd "$WORK" && timeout 120 "$SHADCN" list FreitasVarejo/ui </dev/null)"
-for item in agent-kit app-shell data-table detail-page entity-form feedback search-results states theme-default theme-editorial; do
+for item in agent-kit app-shell command-palette data-table detail-page entity-form feedback file-upload jobs-panel search-results states theme-default theme-editorial; do
   grep -q "$item" <<<"$LIST" || { echo "FALHOU: list não mostra $item"; echo "$LIST"; exit 1; }
 done
 echo "list mostra os itens do registry"
@@ -57,8 +57,8 @@ run "$SHADCN" init -t vite -b base -p nova -n app -y --no-monorepo --no-rtl
 cd app
 expect components.json '"style": "base-nova"'
 
-BLOCKS=(app-shell states feedback data-table search-results detail-page entity-form)
-OWN_DIRS='(states|feedback|app-shell|data-table|search-results|detail-page|entity-form)'
+BLOCKS=(app-shell states feedback data-table search-results detail-page entity-form file-upload jobs-panel command-palette)
+OWN_DIRS='(states|feedback|app-shell|data-table|search-results|detail-page|entity-form|file-upload|jobs-panel|command-palette)'
 
 # O CLI do shadcn tem um defeito conhecido: o mesmo arquivo do shadcn (ex.:
 # ui/alert-dialog.tsx) sai com ou sem "use client" conforme a posição no lote,
@@ -102,24 +102,38 @@ step "dependência entre itens: o projeto já tem states e feedback"
 # Os blocos de dados dependem de FreitasVarejo/ui/states e /feedback. Com os dois
 # já instalados e iguais, o CLI não pergunta nada e instala só o que falta.
 cp src/components/states/empty-state.tsx "$WORK/empty-state.before"
-install data-table
+install data-table jobs-panel
 test -f src/components/data-table/data-table.tsx
+test -f src/components/jobs-panel/jobs-panel.tsx
 cmp -s src/components/states/empty-state.tsx "$WORK/empty-state.before"
 
 step "dependência entre itens: o projeto ainda não tem states nem feedback"
-rm -rf src/components/states src/components/feedback src/components/data-table
-install search-results detail-page entity-form
+rm -rf src/components/states src/components/feedback src/components/data-table src/components/jobs-panel
+install search-results detail-page entity-form jobs-panel
 test -f src/components/states/empty-state.tsx
 test -f src/components/feedback/confirm-destructive.tsx
 test -f src/components/search-results/search-results.tsx
 test -f src/components/detail-page/detail-page.tsx
 test -f src/components/entity-form/entity-form.tsx
+test -f src/components/jobs-panel/jobs-panel.tsx
 install data-table
 test -f src/components/data-table/data-table.tsx
 expect package.json '"@tanstack/react-table"'
 expect package.json '"react-hook-form"'
 expect package.json '"@hookform/resolvers"'
 expect package.json '"zod"'
+
+step "blocos sem dependência entre itens: file-upload e command-palette"
+# Só dependem de componentes do shadcn (progress, command, dialog); o `command`
+# traz o cmdk.
+install file-upload command-palette
+test -f src/components/file-upload/file-upload.tsx
+test -f src/components/file-upload/use-upload-queue.ts
+test -f src/components/command-palette/command-palette.tsx
+test -f src/components/ui/progress.tsx
+test -f src/components/ui/command.tsx
+test -f src/components/ui/dialog.tsx
+expect package.json '"cmdk"'
 
 step "página com os blocos: typecheck e build"
 cp "$REPO/scripts/consume/App.tsx.template" src/App.tsx

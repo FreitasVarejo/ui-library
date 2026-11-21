@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button"
 import { AppToaster } from "@registry/feedback/app-toaster"
+import { CommandPalettePage } from "./pages/command-palette-page"
 import { DataTablePage } from "./pages/data-table-page"
 import { DetailPageDemo } from "./pages/detail-page-page"
 import { EntityFormPage } from "./pages/entity-form-page"
 import { FeedbackPage } from "./pages/feedback-page"
+import { FileUploadPage } from "./pages/file-upload-page"
+import { JobsPanelPage } from "./pages/jobs-panel-page"
 import { SearchResultsPage } from "./pages/search-results-page"
 import { ShellPage } from "./pages/shell-page"
 import { StatesPage } from "./pages/states-page"
@@ -19,6 +22,9 @@ const ITEMS = [
   { id: "search-results", label: "search-results", page: SearchResultsPage },
   { id: "detail-page", label: "detail-page", page: DetailPageDemo },
   { id: "entity-form", label: "entity-form", page: EntityFormPage },
+  { id: "file-upload", label: "file-upload", page: FileUploadPage },
+  { id: "jobs-panel", label: "jobs-panel", page: JobsPanelPage },
+  { id: "command-palette", label: "command-palette", page: CommandPalettePage },
   { id: "theme", label: "tema", page: ThemePage },
 ] as const
 

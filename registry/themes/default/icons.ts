@@ -37,6 +37,10 @@ import {
   ChevronRight as ChevronRightIcon,
   Ellipsis as EllipsisIcon,
   Pencil as PencilIcon,
+  Clock as ClockIcon,
+  Square as SquareIcon,
+  Copy as CopyIcon,
+  Terminal as TerminalIcon,
 } from "lucide-react"
 
 export const Icons = {
@@ -75,6 +79,10 @@ export const Icons = {
   chevronRight: ChevronRightIcon,
   more: EllipsisIcon,
   edit: PencilIcon,
+  clock: ClockIcon,
+  stop: SquareIcon,
+  copy: CopyIcon,
+  terminal: TerminalIcon,
 } as const
 
 export type IconName = keyof typeof Icons

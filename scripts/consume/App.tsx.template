@@ -22,6 +22,12 @@ import { DataTable } from "@/components/data-table"
 import type { DataTableFeatures } from "@/components/data-table"
 import { DetailPage } from "@/components/detail-page"
 import { EntityForm } from "@/components/entity-form"
+import {
+  CommandPalette,
+  CommandPaletteTrigger,
+} from "@/components/command-palette"
+import { FileUpload } from "@/components/file-upload"
+import { JobsPanel } from "@/components/jobs-panel"
 import { SearchResults } from "@/components/search-results"
 import { Icons } from "@/lib/icons"
 
@@ -64,6 +70,29 @@ export function App() {
         ]}
         brand={<span className="px-2 font-heading font-semibold">Consumidor</span>}
         breadcrumb={[{ label: "Início", href: "#home" }, { label: "Busca" }]}
+        actions={
+          <CommandPalette
+            trigger={<CommandPaletteTrigger />}
+            groups={[
+              {
+                id: "nav",
+                heading: "Navegação",
+                items: [
+                  {
+                    id: "uploads",
+                    label: "Ir para envios",
+                    icon: <Icons.upload />,
+                    shortcut: "G E",
+                    onSelect: () => setView("uploads"),
+                  },
+                ],
+              },
+            ]}
+            search={async (query) => [
+              { id: query, label: query, onSelect: () => setView("search") },
+            ]}
+          />
+        }
         user={{ name: "Pessoa Teste", email: "teste@exemplo.com" }}
         userMenu={[{ label: "Sair", icon: <Icons.logout />, destructive: true }]}
       >
@@ -122,6 +151,30 @@ export function App() {
           defaultValues={{ title: "" }}
           fields={[{ name: "title", label: "Título" }]}
           onSubmit={() => undefined}
+        />
+        <FileUpload
+          accept={[".pdf"]}
+          maxSize={1024 * 1024}
+          upload={async (file, { onProgress, signal }) => {
+            onProgress(50)
+            if (signal.aborted) throw new Error("cancelado")
+            return file.name
+          }}
+        />
+        <JobsPanel
+          jobs={[
+            {
+              id: "1",
+              name: "Indexar acervo",
+              status: "running",
+              progress: 40,
+              startedAt: Date.now() - 60_000,
+              log: "linha 1",
+            },
+            { id: "2", name: "Reindexar", status: "failed", error: "Timeout" },
+          ]}
+          onRetry={() => undefined}
+          onCancel={() => undefined}
         />
         <LoadingState variant="cards" count={3} />
         <EmptyState action={<Button>Enviar arquivo</Button>} />

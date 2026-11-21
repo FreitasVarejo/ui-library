@@ -169,6 +169,69 @@ for (const brand of brands) {
       page = await open(context, `${tag} theme`, { ...common, item: "theme" })
       await noOverflow(page, `${tag} theme`)
       await shot(page, `${tag}--theme`, { fullPage: true })
+      // foco (Tab): contorno sólido de 2px na cor --ring; desabilitado sem
+      // opacidade, com o par de tokens --disabled/--disabled-foreground
+      const resolve = (name, property) =>
+        page.evaluate(
+          ([token, prop]) => {
+            const probe = document.createElement("span")
+            probe.style[prop] = `var(--${token})`
+            document.body.append(probe)
+            const value = getComputedStyle(probe)[prop]
+            probe.remove()
+            return value
+          },
+          [name, property]
+        )
+      const defaultButton = page
+        .getByRole("button", { name: "default", exact: true })
+        .first()
+      let focused = false
+      for (let step = 0; step < 40 && !focused; step++) {
+        await page.keyboard.press("Tab")
+        focused = await defaultButton.evaluate(
+          (element) => element === document.activeElement
+        )
+      }
+      check(focused, `${tag}: o teclado (Tab) não chegou ao botão`)
+      // o botão tem `transition-all`: espera o contorno chegar ao valor final
+      await page.waitForTimeout(400)
+      const outline = await defaultButton.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return {
+          style: style.outlineStyle,
+          width: style.outlineWidth,
+          offset: style.outlineOffset,
+          color: style.outlineColor,
+        }
+      })
+      check(
+        outline.style === "solid" &&
+          outline.width === "2px" &&
+          outline.offset === "2px" &&
+          outline.color === (await resolve("ring", "color")),
+        `${tag}: foco sem contorno sólido de 2px em --ring (${JSON.stringify(outline)})`
+      )
+      await shot(page, `${tag}--theme-focus`, { fullPage: true })
+      const off = page
+        .getByRole("button", { name: "default", exact: true })
+        .nth(1)
+      const disabledStyle = await off.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return {
+          opacity: style.opacity,
+          background: style.backgroundColor,
+          color: style.color,
+        }
+      })
+      check(
+        disabledStyle.opacity === "1" &&
+          disabledStyle.background ===
+            (await resolve("disabled", "backgroundColor")) &&
+          disabledStyle.color ===
+            (await resolve("disabled-foreground", "color")),
+        `${tag}: botão desabilitado fora do par de tokens (${JSON.stringify(disabledStyle)})`
+      )
       await page.close()
 
       page = await open(context, `${tag} feedback`, {
@@ -183,6 +246,30 @@ for (const brand of brands) {
       await page.waitForTimeout(600)
       await shot(page, `${tag}--feedback-toasts`)
 
+      // botão destrutivo suave em hover: fundo --destructive-soft-hover e
+      // borda vermelha de 1px (só onde há hover)
+      const softButton = page.getByRole("button", {
+        name: "Excluir (componente)",
+      })
+      await softButton.hover()
+      await page.waitForTimeout(400)
+      const soft = await softButton.evaluate((element) => {
+        const style = getComputedStyle(element)
+        return {
+          border: style.borderTopColor,
+          width: style.borderTopWidth,
+          background: style.backgroundColor,
+        }
+      })
+      check(
+        soft.width === "1px" &&
+          soft.border === (await resolve("destructive", "color")) &&
+          soft.background ===
+            (await resolve("destructive-soft-hover", "backgroundColor")),
+        `${tag}: destrutivo suave em hover sem borda e fundo do tema (${JSON.stringify(soft)})`
+      )
+      await shot(page, `${tag}--feedback-soft-hover`)
+      await page.mouse.move(0, 0)
       await page.getByRole("button", { name: "Excluir (componente)" }).click()
       const cancel = page.getByRole("button", { name: "Cancelar" })
       await cancel.waitFor()
@@ -195,8 +282,9 @@ for (const brand of brands) {
         .getByRole("button", { name: "Excluir", exact: true })
         .getAttribute("class")
       check(
-        confirmClass?.includes("text-destructive"),
-        `${tag}: botão de confirmar sem o token destructive`
+        confirmClass?.includes("bg-destructive") &&
+          confirmClass.includes("text-destructive-foreground"),
+        `${tag}: botão de confirmar sem os tokens destructive`
       )
       await shot(page, `${tag}--feedback-confirm`)
       await page.keyboard.press("Escape")

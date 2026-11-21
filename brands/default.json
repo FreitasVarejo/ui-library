@@ -9,5 +9,6 @@
   "radius": "0.625rem",
   "density": "normal",
   "shadow": "soft",
+  "target": "compact",
   "icons": "lucide"
 }

@@ -180,7 +180,7 @@ export function AppShell({
           {footer ? <SidebarFooter>{footer}</SidebarFooter> : null}
         </Sidebar>
         <SidebarInset>
-          <header className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 border-b bg-background px-3">
+          <header className="sticky top-0 z-10 flex min-h-12 shrink-0 items-center gap-2 border-b bg-background px-3 py-1">
             <SidebarToggle label={text.toggleSidebar} />
             <Separator orientation="vertical" className="my-auto h-4" />
             {breadcrumb && breadcrumb.length > 0 ? (

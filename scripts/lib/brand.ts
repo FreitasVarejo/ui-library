@@ -3,8 +3,10 @@ import type { IconPackName } from "./icon-packs.ts"
 
 export const DENSITIES = ["compact", "normal", "airy"] as const
 export const SHADOWS = ["none", "soft", "strong"] as const
+export const TARGETS = ["compact", "comfortable", "touch"] as const
 export type Density = (typeof DENSITIES)[number]
 export type Shadow = (typeof SHADOWS)[number]
+export type Target = (typeof TARGETS)[number]
 export type Fallback = "sans-serif" | "serif" | "monospace"
 
 export interface BrandFont {
@@ -23,6 +25,11 @@ export interface Brand {
   radius: string
   density: Density
   shadow: Shadow
+  /**
+   * alvo mínimo de toque dos controles: `compact` deixa o tamanho do shadcn
+   * (32px), `comfortable` 44px, `touch` 56px; padrão: `compact`
+   */
+  target: Target
   icons: IconPackName
 }
 
@@ -125,6 +132,10 @@ export function parseBrand(name: string, file: string, data: unknown): Brand {
     radius,
     density: oneOf(file, raw, "density", DENSITIES),
     shadow: oneOf(file, raw, "shadow", SHADOWS),
+    target:
+      raw.target === undefined
+        ? "compact"
+        : oneOf(file, raw, "target", TARGETS),
     icons,
   }
 }

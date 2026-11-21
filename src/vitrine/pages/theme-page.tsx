@@ -1,3 +1,16 @@
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 import { Icons } from "@/lib/icons"
 import type { IconName } from "@/lib/icons"
 import { Section } from "../section"
@@ -10,12 +23,22 @@ const SURFACES: Array<[string, string]> = [
   ["secondary", "secondary-foreground"],
   ["muted", "muted-foreground"],
   ["accent", "accent-foreground"],
+  ["destructive", "destructive-foreground"],
+  ["disabled", "disabled-foreground"],
   ["sidebar", "sidebar-foreground"],
   ["sidebar-primary", "sidebar-primary-foreground"],
   ["sidebar-accent", "sidebar-accent-foreground"],
 ]
 const LINES = ["border", "input", "ring", "sidebar-border", "sidebar-ring"]
 const CHARTS = [1, 2, 3, 4, 5]
+const VARIANTS = [
+  "default",
+  "secondary",
+  "outline",
+  "ghost",
+  "link",
+  "destructive",
+] as const
 // Classes literais, para o Tailwind encontrá-las ao varrer o código.
 const SHADOWS = [
   ["sm", "shadow-sm"],
@@ -67,6 +90,85 @@ export function ThemePage() {
               <span className="font-mono">chart-{n}</span>
             </div>
           ))}
+        </div>
+      </Section>
+
+      <Section
+        title="Controles"
+        description="Repouso e desabilitado; use Tab para ver o anel de foco."
+      >
+        <div className="flex flex-col gap-4 rounded-lg border bg-card p-4 text-card-foreground">
+          {[false, true].map((disabled) => (
+            <div key={String(disabled)} className="flex flex-wrap gap-2">
+              {VARIANTS.map((variant) => (
+                <Button key={variant} variant={variant} disabled={disabled}>
+                  {variant}
+                </Button>
+              ))}
+              <Button
+                size="icon"
+                variant="outline"
+                disabled={disabled}
+                aria-label="Mais"
+              >
+                <Icons.plus />
+              </Button>
+            </div>
+          ))}
+          <div className="grid gap-3 md:grid-cols-2">
+            {[false, true].map((disabled) => (
+              <div key={String(disabled)} className="flex flex-col gap-3">
+                <Input
+                  placeholder="Título"
+                  defaultValue="Contrato"
+                  disabled={disabled}
+                  aria-label={disabled ? "Campo desabilitado" : "Campo"}
+                />
+                <Textarea
+                  placeholder="Descrição"
+                  disabled={disabled}
+                  aria-label={disabled ? "Texto desabilitado" : "Texto"}
+                />
+                <Select disabled={disabled} defaultValue="pdf">
+                  <SelectTrigger
+                    aria-label={disabled ? "Tipo desabilitado" : "Tipo"}
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pdf">PDF</SelectItem>
+                    <SelectItem value="docx">DOCX</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="flex items-center gap-4">
+                  {[false, true].map((checked) => (
+                    <div
+                      key={String(checked)}
+                      className="flex items-center gap-2"
+                    >
+                      <Checkbox
+                        id={`check-${disabled}-${checked}`}
+                        defaultChecked={checked}
+                        disabled={disabled}
+                      />
+                      <Label htmlFor={`check-${disabled}-${checked}`}>
+                        {checked ? "Marcado" : "Vazio"}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <Tabs defaultValue="um">
+            <TabsList>
+              <TabsTrigger value="um">Um</TabsTrigger>
+              <TabsTrigger value="dois">Dois</TabsTrigger>
+              <TabsTrigger value="tres" disabled>
+                Três
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </Section>
 

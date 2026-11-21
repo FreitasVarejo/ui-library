@@ -109,7 +109,7 @@ export function formatOklch(color: Oklch, alpha?: number): string {
   const base = `${round(color.l, 3)} ${round(chroma, 3)} ${round(hue, 3)}`
   return alpha === undefined
     ? `oklch(${base})`
-    : `oklch(${base} / ${alpha * 100}%)`
+    : `oklch(${base} / ${round(alpha * 100, 2)}%)`
 }
 
 /** Hex da cor como ela aparece na tela (cortada para sRGB). */
@@ -119,4 +119,25 @@ export function toHex(color: Oklch): string {
 
 export function contrast(foreground: Oklch, background: Oklch): number {
   return wcagContrast(clampRgb(toRgb(foreground)), clampRgb(toRgb(background)))
+}
+
+/**
+ * `foreground` com opacidade `alpha` por cima de `background`, como o
+ * navegador compõe (`bg-destructive/10` sobre a superfície): mistura linear
+ * nos canais sRGB, já cortados para o gamut.
+ */
+export function blend(
+  foreground: Oklch,
+  background: Oklch,
+  alpha: number
+): Oklch {
+  const top = clampRgb(toRgb(foreground))
+  const bottom = clampRgb(toRgb(background))
+  const mix = (a: number, b: number) => a * alpha + b * (1 - alpha)
+  return toOklch({
+    mode: "rgb",
+    r: mix(top.r, bottom.r),
+    g: mix(top.g, bottom.g),
+    b: mix(top.b, bottom.b),
+  }) as Oklch
 }

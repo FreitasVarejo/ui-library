@@ -1,11 +1,13 @@
 import { spawnSync } from "node:child_process"
 import { existsSync, readFileSync } from "node:fs"
 import { join, resolve } from "node:path"
+import { clampRgb, converter, parse, wcagContrast } from "culori"
 import { describe, expect, it } from "vitest"
 
 import { BrandError, parseBrand } from "../scripts/lib/brand.ts"
 import { generateTheme } from "../scripts/lib/generate.ts"
 import { ICON_KEYS, ICON_PACKS } from "../scripts/lib/icon-packs.ts"
+import { contrast } from "../scripts/lib/palette.ts"
 import {
   CONTRAST_PAIRS,
   checkContrast,
@@ -13,10 +15,31 @@ import {
 } from "../scripts/lib/tokens.ts"
 
 const root = resolve(import.meta.dirname, "..")
+const toRgb = converter("rgb")
 
 function brand(name: string) {
   const file = join(root, "brands", `${name}.json`)
   return parseBrand(name, file, JSON.parse(readFileSync(file, "utf8")))
+}
+
+const THEMES = ["default", "editorial"]
+
+function withBrand(name: string, changes: Record<string, unknown>) {
+  const file = join(root, "brands", `${name}.json`)
+  const data = { ...JSON.parse(readFileSync(file, "utf8")), ...changes }
+  return parseBrand(name, file, data)
+}
+
+function ratio(
+  tokens: ReturnType<typeof deriveTokens>,
+  mode: "light" | "dark",
+  foreground: string,
+  background: string
+) {
+  return contrast(
+    tokens[mode][foreground].color,
+    tokens[mode][background].color
+  )
 }
 
 function runTheme(...args: string[]) {
@@ -68,6 +91,189 @@ describe("contraste do tema", () => {
     })
   }
 
+  it("o corpo de texto pede 7:1 e os demais pares de texto, 4.5:1", () => {
+    const minimum = (fg: string, bg: string) =>
+      CONTRAST_PAIRS.find(([f, b]) => f === fg && b === bg)?.[3] ?? 4.5
+    expect(minimum("foreground", "background")).toBe(7)
+    expect(minimum("card-foreground", "card")).toBe(7)
+    expect(minimum("popover-foreground", "popover")).toBe(7)
+    expect(minimum("primary-foreground", "primary")).toBe(4.5)
+    expect(minimum("muted-foreground", "background")).toBe(4.5)
+    expect(minimum("disabled-foreground", "disabled")).toBe(4.5)
+    // sem exceção de texto grande: os únicos pares abaixo de 4.5 são os de
+    // não-texto (anel, borda de campo e a borda vermelha do destrutivo)
+    const lenient = CONTRAST_PAIRS.filter(([, , , min = 4.5]) => min < 4.5)
+    for (const [fg, bg, , min] of lenient) {
+      expect(min, `${fg}/${bg}`).toBe(3)
+      expect(["ring", "input", "destructive"], `${fg}/${bg}`).toContain(fg)
+    }
+    // o texto de erro segue exigindo 4.5 sobre fundo, cartão e popover
+    expect(minimum("destructive", "background")).toBe(4.5)
+    expect(minimum("destructive", "card")).toBe(4.5)
+    expect(minimum("destructive", "popover")).toBe(4.5)
+  })
+
+  it("a borda vermelha do destrutivo pede 3:1 contra fundo, cartão e popover", () => {
+    for (const surface of ["background", "card", "popover"]) {
+      const pair = CONTRAST_PAIRS.find(
+        ([fg, bg, , min]) => fg === "destructive" && bg === surface && min === 3
+      )
+      expect(pair, `destructive/${surface}`).toBeTruthy()
+    }
+    for (const name of THEMES) {
+      const tokens = deriveTokens(brand(name))
+      for (const mode of ["light", "dark"] as const) {
+        for (const surface of ["background", "card", "popover"]) {
+          expect(
+            ratio(tokens, mode, "destructive", surface),
+            `${name} ${mode} ${surface}`
+          ).toBeGreaterThanOrEqual(3)
+        }
+      }
+    }
+    // o portão reprova o que ficar abaixo de 3:1
+    const tokens = deriveTokens(brand("default"))
+    tokens.dark.destructive = {
+      color: { mode: "oklch", l: 0.3, c: 0.2, h: 27 },
+      css: "oklch(0.3 0.2 27)",
+    }
+    const failures = checkContrast(tokens).filter(
+      (f) =>
+        f.mode === "dark" && f.foreground === "destructive" && f.minimum === 3
+    )
+    expect(failures.map((f) => f.background).sort()).toEqual([
+      "background",
+      "card",
+      "popover",
+    ])
+  })
+
+  it("reprova corpo de texto entre 4.5:1 e 7:1", () => {
+    const tokens = deriveTokens(brand("default"))
+    tokens.light.foreground = {
+      color: { mode: "oklch", l: 0.55, c: 0, h: 0 },
+      css: "oklch(0.55 0 0)",
+    }
+    const failures = checkContrast(tokens)
+    const failure = failures.find((f) => f.foreground === "foreground")
+    expect(failure?.minimum).toBe(7)
+    expect(failure?.ratio).toBeGreaterThan(4.5)
+    expect(failure?.message).toContain("abaixo de 7:1")
+    expect(failures.every((f) => f.foreground === "foreground")).toBe(true)
+  })
+
+  it("reprova o anel de foco abaixo de 3:1, com a dica", () => {
+    const result = runTheme("tests/fixtures/low-ring.json")
+    expect(result.status).toBe(1)
+    expect(result.stderr).toContain("ring")
+    expect(result.stderr).toContain("3:1")
+    expect(result.stderr).toContain("modo light")
+    expect(result.stderr).toContain("anel de foco")
+    expect(existsSync(join(root, "registry/themes/low-ring"))).toBe(false)
+  })
+
+  for (const name of THEMES) {
+    describe(name, () => {
+      const tokens = deriveTokens(brand(name))
+
+      it("o anel de foco é a primária de cada modo, com 3:1 sobre fundo e cartão", () => {
+        for (const mode of ["light", "dark"] as const) {
+          expect(tokens[mode].ring.css).toBe(tokens[mode].primary.css)
+          expect(tokens[mode]["sidebar-ring"].css).toBe(
+            tokens[mode].primary.css
+          )
+          expect(
+            ratio(tokens, mode, "ring", "background")
+          ).toBeGreaterThanOrEqual(3)
+          expect(ratio(tokens, mode, "ring", "card")).toBeGreaterThanOrEqual(3)
+        }
+      })
+
+      it("a borda do campo é um tom sólido com 3:1 sobre fundo e cartão", () => {
+        for (const mode of ["light", "dark"] as const) {
+          expect(tokens[mode].input.css).not.toContain("/")
+          expect(
+            ratio(tokens, mode, "input", "background")
+          ).toBeGreaterThanOrEqual(3)
+          expect(ratio(tokens, mode, "input", "card")).toBeGreaterThanOrEqual(3)
+        }
+      })
+
+      it("o texto sobre a primária tem 4.5:1, sem exceção de texto grande", () => {
+        for (const mode of ["light", "dark"] as const) {
+          expect(
+            ratio(tokens, mode, "primary-foreground", "primary")
+          ).toBeGreaterThanOrEqual(4.5)
+        }
+      })
+
+      it("destrutivo: texto sobre o vermelho cheio e o vermelho sobre o botão suave passam de 4.5:1", () => {
+        for (const mode of ["light", "dark"] as const) {
+          const alpha = mode === "light" ? 0.1 : 0.2
+          expect(
+            ratio(tokens, mode, "destructive-foreground", "destructive")
+          ).toBeGreaterThanOrEqual(4.5)
+          for (const surface of ["background", "popover"]) {
+            // medido por fora do gerador: o que o navegador compõe de
+            // bg-destructive/10 (claro) ou /20 (escuro) sobre a superfície
+            const top = toRgb(parse(tokens[mode].destructive.css))!
+            const bottom = toRgb(parse(tokens[mode][surface].css))!
+            const mixed = {
+              mode: "rgb" as const,
+              r: top.r * alpha + bottom.r * (1 - alpha),
+              g: top.g * alpha + bottom.g * (1 - alpha),
+              b: top.b * alpha + bottom.b * (1 - alpha),
+            }
+            expect(
+              wcagContrast(clampRgb(top), clampRgb(mixed)),
+              `${mode} ${surface}`
+            ).toBeGreaterThanOrEqual(4.5)
+          }
+        }
+      })
+
+      it("destrutivo suave em hover: a maior mistura (até o teto do shadcn) que passa de 4.5:1", () => {
+        for (const mode of ["light", "dark"] as const) {
+          const token = tokens[mode]["destructive-soft-hover"]
+          const rest = mode === "light" ? 0.1 : 0.2
+          const cap = mode === "light" ? 0.2 : 0.3
+          expect(token.css).toMatch(/^oklch\(.* \/ \d+%\)$/)
+          const alpha = Number(/\/ (\d+)%/.exec(token.css)![1]) / 100
+          expect(alpha).toBeGreaterThanOrEqual(rest)
+          expect(alpha).toBeLessThanOrEqual(cap)
+          const top = toRgb(parse(tokens[mode].destructive.css))!
+          const passes = (a: number, surface: string) => {
+            const bottom = toRgb(parse(tokens[mode][surface].css))!
+            const mixed = {
+              mode: "rgb" as const,
+              r: top.r * a + bottom.r * (1 - a),
+              g: top.g * a + bottom.g * (1 - a),
+              b: top.b * a + bottom.b * (1 - a),
+            }
+            return wcagContrast(clampRgb(top), clampRgb(mixed)) >= 4.5
+          }
+          for (const surface of ["background", "popover"]) {
+            expect(passes(alpha, surface), `${mode} ${surface}`).toBe(true)
+          }
+          // um ponto percentual a mais já reprova, a menos que seja o teto
+          if (alpha < cap) {
+            expect(
+              ["background", "popover"].every((s) => passes(alpha + 0.01, s))
+            ).toBe(false)
+          }
+        }
+      })
+
+      it("desabilitado: texto e fundo por token, com 4.5:1 entre eles", () => {
+        for (const mode of ["light", "dark"] as const) {
+          expect(
+            ratio(tokens, mode, "disabled-foreground", "disabled")
+          ).toBeGreaterThanOrEqual(4.5)
+        }
+      })
+    })
+  }
+
   it("cobre o mínimo exigido de pares", () => {
     const pairs = CONTRAST_PAIRS.map(([fg, bg]) => `${fg}/${bg}`)
     for (const required of [
@@ -99,6 +305,10 @@ describe("item de tema", () => {
     "accent",
     "accent-foreground",
     "destructive",
+    "destructive-foreground",
+    "destructive-soft-hover",
+    "disabled",
+    "disabled-foreground",
     "border",
     "input",
     "ring",
@@ -136,6 +346,14 @@ describe("item de tema", () => {
       expect(item.cssVars.theme["font-sans"]).toContain("Variable")
       expect(item.cssVars.theme.spacing).toMatch(/rem$/)
       expect(item.cssVars.theme["shadow-sm"]).toBeTruthy()
+      // utilitários text-destructive-foreground, bg-disabled... no consumidor
+      expect(item.cssVars.theme["color-destructive-foreground"]).toBe(
+        "var(--destructive-foreground)"
+      )
+      expect(item.cssVars.theme["color-disabled"]).toBe("var(--disabled)")
+      expect(item.cssVars.theme["color-disabled-foreground"]).toBe(
+        "var(--disabled-foreground)"
+      )
     })
   }
 
@@ -156,4 +374,170 @@ describe("item de tema", () => {
       }
     }
   })
+})
+
+describe("alvo de toque da marca", () => {
+  it("o padrão é compact e os dois temas do repo o declaram", () => {
+    for (const name of THEMES) {
+      const raw = JSON.parse(
+        readFileSync(join(root, "brands", `${name}.json`), "utf8")
+      )
+      expect(raw.target).toBe("compact")
+      expect(brand(name).target).toBe("compact")
+    }
+    const { target, ...semAlvo } = JSON.parse(
+      readFileSync(join(root, "brands/default.json"), "utf8")
+    )
+    expect(target).toBe("compact")
+    expect(parseBrand("x", "x.json", semAlvo).target).toBe("compact")
+  })
+
+  it("rejeita valor que não é compact, comfortable ou touch", () => {
+    expect(() => withBrand("default", { target: "huge" })).toThrow(BrandError)
+    expect(() => withBrand("default", { target: "" })).toThrow(BrandError)
+  })
+
+  function themeCss(name: string, target: string) {
+    const { files } = generateTheme(withBrand(name, { target }))
+    const registry = JSON.parse(
+      files.get(`registry/themes/${name}/registry.json`)!
+    )
+    return {
+      css: registry.items[0].css as Record<string, Record<string, string>>,
+      vitrine: files.get(`src/themes/${name}.css`)!,
+    }
+  }
+
+  it("compact emite os mesmos seletores do alvo com revert-layer, sem px", () => {
+    const compact = themeCss("default", "compact")
+    const touch = themeCss("default", "touch")
+    const reverted = Object.entries(compact.css).filter(
+      ([, declarations]) =>
+        declarations["min-height"] === "revert-layer" ||
+        declarations["min-width"] === "revert-layer"
+    )
+    expect(reverted.length).toBeGreaterThan(0)
+    // todo seletor de alvo do touch existe no compact: o CLI do shadcn só
+    // substitui regra de mesmo seletor, então trocar de marca desfaz o touch
+    const sized = Object.entries(touch.css).filter(([, declarations]) =>
+      ["min-height", "min-width", "inset", "height"].some((property) =>
+        /px|auto/.test(declarations[property] ?? "")
+      )
+    )
+    for (const [selector] of sized) {
+      expect(Object.keys(compact.css), selector).toContain(selector)
+    }
+    expect(JSON.stringify(compact.css)).not.toContain("44px")
+    expect(JSON.stringify(compact.css)).not.toContain("56px")
+    expect(compact.vitrine).toContain("min-height: revert-layer;")
+    // o textarea volta ao min-h-16 do shadcn em vez de zerar
+    expect(compact.css['[data-slot="textarea"]']["min-height"]).toBe(
+      "revert-layer"
+    )
+  })
+
+  it("rótulo ao lado do checkbox desabilitado do Base UI (span com data-disabled)", () => {
+    const { css } = themeCss("default", "compact")
+    expect(JSON.stringify(Object.keys(css))).toContain(
+      '.peer:is(:disabled, [data-disabled]:not([data-disabled=\\"false\\"]), [aria-disabled=\\"true\\"]) ~ [data-slot=\\"label\\"]'
+    )
+  })
+
+  for (const [target, size] of [
+    ["comfortable", "44px"],
+    ["touch", "56px"],
+  ] as const) {
+    it(`${target}: ${size} de altura mínima nos controles, ícone quadrado`, () => {
+      const { css, vitrine } = themeCss("default", target)
+      const heights = Object.entries(css).filter(
+        ([, declarations]) => declarations["min-height"] === size
+      )
+      const selectors = heights.map(([selector]) => selector).join(", ")
+      for (const slot of ["input", "select-trigger", "toggle"]) {
+        expect(selectors).toContain(`[data-slot="${slot}"]`)
+      }
+      expect(selectors).toContain('[data-slot][class~="group/button"]')
+      expect(JSON.stringify(css)).toContain(
+        `max(${size}, calc(var(--spacing) * 16))`
+      )
+      const square = Object.entries(css).find(
+        ([, declarations]) => declarations["min-width"] === size
+      )
+      expect(square?.[0]).toContain('[class~="size-8"]')
+      expect(vitrine).toContain(`min-height: ${size};`)
+    })
+  }
+})
+
+describe("CSS do tema sobre os componentes do shadcn", () => {
+  for (const name of THEMES) {
+    const { files } = generateTheme(brand(name))
+    const registry = JSON.parse(
+      files.get(`registry/themes/${name}/registry.json`)!
+    )
+    const css = registry.items[0].css as Record<string, Record<string, string>>
+    const vitrine = files.get(`src/themes/${name}.css`)!
+
+    it(`${name}: foco sólido de 2px na cor --ring, sem o halo`, () => {
+      expect(css["[data-slot]:focus-visible"]).toEqual({
+        outline: "2px solid var(--ring)",
+        "outline-offset": "2px",
+        "--tw-ring-shadow": "0 0 #0000",
+      })
+    })
+
+    it(`${name}: hover do destrutivo suave: fundo e borda por token, só onde há hover`, () => {
+      const selector = '[data-slot][class~="bg-destructive/10"]:hover'
+      // dentro de @media (hover: hover), como o `hover:` do Tailwind v4
+      expect(css[selector]).toBeUndefined()
+      expect(
+        (css["@media (hover: hover)"] as unknown as Record<string, unknown>)[
+          selector
+        ]
+      ).toEqual({
+        "background-color": "var(--destructive-soft-hover)",
+        "border-color": "var(--destructive)",
+      })
+      expect(vitrine).toContain("@media (hover: hover) {")
+      expect(vitrine).toContain(
+        `  html[data-brand="${name}"] ${selector} {\n    background-color: var(--destructive-soft-hover);\n    border-color: var(--destructive);\n  }`
+      )
+    })
+
+    it(`${name}: desabilitado sem opacidade, por par de token`, () => {
+      const opacity = Object.entries(css).find(
+        ([, declarations]) => declarations.opacity === "1"
+      )
+      expect(opacity?.[0]).toContain("[data-slot]")
+      expect(opacity?.[0]).toContain(":disabled")
+      expect(opacity?.[0]).toContain("[data-disabled]")
+      expect(opacity?.[0]).toContain('[aria-disabled="true"]')
+      expect(opacity?.[0]).toContain("breadcrumb-page")
+      const filled = Object.entries(css).find(
+        ([selector, declarations]) =>
+          selector.includes('[class~="bg-primary"]') &&
+          declarations["background-color"] === "var(--disabled)"
+      )
+      expect(filled).toBeTruthy()
+      const text = Object.entries(css).find(
+        ([selector, declarations]) =>
+          selector.startsWith('[data-slot][class~="group/button"]:is(') &&
+          declarations.color === "var(--disabled-foreground)"
+      )
+      expect(text).toBeTruthy()
+    })
+
+    it(`${name}: a vitrine recebe as mesmas regras presas à marca`, () => {
+      expect(vitrine).toContain(
+        `html[data-brand="${name}"] [data-slot]:focus-visible {`
+      )
+      expect(vitrine).toContain("--tw-ring-shadow: 0 0 #0000;")
+      expect(vitrine).toContain("var(--disabled-foreground)")
+      for (const block of vitrine.split("\n\n")) {
+        if (block.includes("{") && block.includes("--tw-ring-shadow")) {
+          expect(block.startsWith(`html[data-brand="${name}"]`)).toBe(true)
+        }
+      }
+    })
+  }
 })

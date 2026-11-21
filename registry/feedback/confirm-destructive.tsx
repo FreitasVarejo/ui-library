@@ -19,7 +19,13 @@ export interface ConfirmTexts {
   description?: ReactNode
   confirmLabel?: ReactNode
   cancelLabel?: ReactNode
+  /** ícone do diálogo, acima do título */
   icon?: ReactNode
+  /**
+   * ícone do verbo, à esquerda do rótulo do botão que confirma; leve
+   * `data-icon="inline-start"` no elemento para o botão ajustar o espaço
+   */
+  confirmIcon?: ReactNode
 }
 
 export interface ConfirmDestructiveProps extends ConfirmTexts {
@@ -31,7 +37,8 @@ export interface ConfirmDestructiveProps extends ConfirmTexts {
 
 /**
  * Confirmação de ação destrutiva sobre o alert-dialog do shadcn. O botão de
- * confirmar usa o token `destructive` e o foco inicial fica em cancelar.
+ * confirmar é preenchido com os tokens `destructive` e `destructive-foreground`
+ * e leva o ícone do verbo; o foco inicial fica em cancelar.
  */
 export function ConfirmDestructive({
   open,
@@ -42,6 +49,7 @@ export function ConfirmDestructive({
   confirmLabel = "Excluir",
   cancelLabel = "Cancelar",
   icon = <Icons.trash />,
+  confirmIcon = <Icons.trash data-icon="inline-start" />,
 }: ConfirmDestructiveProps) {
   const cancelRef = useRef<HTMLButtonElement>(null)
   const [pending, setPending] = useState(false)
@@ -68,11 +76,15 @@ export function ConfirmDestructive({
           <AlertDialogCancel ref={cancelRef} disabled={pending}>
             {cancelLabel}
           </AlertDialogCancel>
+          {/* O destrutivo do shadcn é suave (`bg-destructive/10`); aqui é cheio,
+              também no escuro, onde o botão suave tem `dark:bg-destructive/20`. */}
           <AlertDialogAction
             variant="destructive"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 dark:bg-destructive dark:hover:bg-destructive/90"
             disabled={pending}
             onClick={confirm}
           >
+            {confirmIcon}
             {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>

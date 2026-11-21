@@ -1,4 +1,5 @@
 import type { Brand, BrandFont } from "./brand.ts"
+import { cssField, themeRules, vitrineCss } from "./css.ts"
 import { ICON_PACKS, renderIconsFile } from "./icon-packs.ts"
 import {
   checkContrast,
@@ -13,7 +14,7 @@ export class ThemeContrastError extends Error {
   failures: ContrastFailure[]
   constructor(brand: string, failures: ContrastFailure[]) {
     super(
-      `marca "${brand}" reprovada na checagem de contraste (mínimo 4.5:1):\n` +
+      `marca "${brand}" reprovada na checagem de contraste:\n` +
         failures.map((failure) => `  - ${failure.message}`).join("\n")
     )
     this.failures = failures
@@ -67,7 +68,8 @@ function cssBlock(selector: string, values: Record<string, string>): string {
 
 /**
  * Gera tudo o que uma marca produz. Lança `ThemeContrastError` antes de
- * devolver qualquer arquivo se algum par texto/fundo ficar abaixo de 4.5:1.
+ * devolver qualquer arquivo se algum par ficar abaixo do mínimo dele (4.5:1
+ * de texto, 7:1 de corpo, 3:1 de anel de foco e borda de campo).
  */
 export function generateTheme(brand: Brand): ThemeArtifacts {
   const tokens = deriveTokens(brand)
@@ -90,6 +92,15 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
   const spacing = spacingFor(brand.density)
   const pack = ICON_PACKS[brand.icons]
   const fontList = uniqueFonts(brand)
+  const rules = themeRules(brand)
+  // Utilitários de cor dos tokens que o shadcn não conhece. O CLI do shadcn
+  // resolve `--color-*` dos tokens novos sozinho, mas só se o valor for uma
+  // cor reconhecida; escrito aqui, o mapeamento não depende disso.
+  const colors = Object.fromEntries(
+    ["destructive-foreground", "disabled", "disabled-foreground"].map(
+      (name) => [`color-${name}`, `var(--${name})`]
+    )
+  )
 
   const item = {
     name: `theme-${brand.name}`,
@@ -110,13 +121,16 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
       },
     ],
     cssVars: {
-      theme: { ...fonts, spacing, ...shadows },
+      theme: { ...fonts, spacing, ...shadows, ...colors },
       light: { ...light, radius: brand.radius },
       dark,
     },
-    css: Object.fromEntries(
-      fontList.map((font) => [`@import "${fontPackage(font)}"`, {}])
-    ),
+    css: {
+      ...Object.fromEntries(
+        fontList.map((font) => [`@import "${fontPackage(font)}"`, {}])
+      ),
+      ...cssField(rules),
+    },
     docs:
       `Tema ${brand.name} aplicado. Os blocos importam ícones de @/lib/icons ` +
       `(pacote ${brand.icons}); para trocar de identidade, instale outro ` +
@@ -142,6 +156,7 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
       radius: brand.radius,
     }),
     cssBlock(`html[data-brand="${brand.name}"].dark`, dark),
+    vitrineCss(brand, rules),
   ].join("\n")
 
   const base = `registry/themes/${brand.name}`

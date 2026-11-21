@@ -138,6 +138,7 @@ export function FileUpload<Result = unknown>({
       <label
         data-slot="file-upload-dropzone"
         data-dragging={dragging || undefined}
+        data-disabled={disabled || undefined}
         onDragEnter={(event) => {
           event.preventDefault()
           if (!disabled) setDragging(true)
@@ -149,8 +150,10 @@ export function FileUpload<Result = unknown>({
         }}
         onDrop={onDrop}
         className={cn(
-          "flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed bg-card p-6 text-center text-card-foreground transition-colors hover:bg-muted/50 has-[input:focus-visible]:border-ring has-[input:focus-visible]:ring-3 has-[input:focus-visible]:ring-ring/50 data-[dragging]:border-primary data-[dragging]:bg-muted",
-          disabled && "pointer-events-none opacity-50"
+          "flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed bg-card p-6 text-center text-card-foreground transition-colors hover:bg-muted/50 has-[input:focus-visible]:border-ring has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-ring has-[input:focus-visible]:outline-solid data-[dragging]:border-primary data-[dragging]:bg-muted",
+          // Desabilitado por par de token, nunca por opacidade.
+          disabled &&
+            "pointer-events-none bg-disabled text-disabled-foreground **:bg-transparent **:text-disabled-foreground"
         )}
       >
         <span className="grid size-10 place-items-center rounded-full bg-muted text-muted-foreground">

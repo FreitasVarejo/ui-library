@@ -23,10 +23,29 @@ describe("ConfirmDestructive", () => {
     const cancel = await screen.findByRole("button", { name: "Cancelar" })
     const confirm = screen.getByRole("button", { name: "Excluir" })
     await vi.waitFor(() => expect(document.activeElement).toBe(cancel))
-    // o botão destrutivo usa o token destructive do tema
-    expect(confirm.className).toContain("text-destructive")
+    // o botão que confirma é preenchido com os tokens do tema, no claro e no escuro
+    expect(confirm.className).toContain("bg-destructive")
+    expect(confirm.className).toContain("text-destructive-foreground")
+    expect(confirm.className).toContain("dark:bg-destructive")
+    // o ícone do verbo vem antes do rótulo
+    expect(confirm.querySelector("svg")).not.toBeNull()
+    expect(confirm.firstElementChild?.tagName.toLowerCase()).toBe("svg")
     await userEvent.click(confirm)
     expect(onConfirm).toHaveBeenCalledOnce()
+  })
+
+  it("troca o ícone do verbo por prop", async () => {
+    render(
+      <ConfirmDestructive
+        open
+        onOpenChange={() => undefined}
+        onConfirm={() => undefined}
+        confirmIcon={<svg data-testid="meu-icone" data-icon="inline-start" />}
+      />
+    )
+    const confirm = await screen.findByRole("button", { name: "Excluir" })
+    expect(confirm.querySelector("[data-testid=meu-icone]")).not.toBeNull()
+    expect(confirm.querySelectorAll("svg")).toHaveLength(1)
   })
 
   it("o hook resolve true ao confirmar e false ao cancelar", async () => {

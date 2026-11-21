@@ -3,8 +3,8 @@
 //   npm run theme -- brands/<nome>.json [outras marcas]
 //   npm run theme:check            (falha se o gerado divergir do versionado)
 //
-// Sai com código 1, sem escrever nada, se alguma marca tiver par texto/fundo
-// abaixo de 4.5:1 ou campo inválido.
+// Sai com código 1, sem escrever nada, se alguma marca tiver par de cores
+// abaixo do mínimo (veja CONTRAST_PAIRS em lib/tokens.ts) ou campo inválido.
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs"
 import { basename, dirname, join, resolve } from "node:path"
 import { BrandError, parseBrand } from "./lib/brand.ts"

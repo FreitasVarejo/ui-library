@@ -9,5 +9,6 @@
   "radius": "0rem",
   "density": "compact",
   "shadow": "none",
+  "target": "compact",
   "icons": "phosphor"
 }

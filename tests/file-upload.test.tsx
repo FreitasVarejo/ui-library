@@ -319,4 +319,17 @@ describe("FileUpload: leitor de tela", () => {
     expect(zone.contains(fileInput(container))).toBe(true)
     expect(fileInput(container).tabIndex).toBe(0)
   })
+
+  it("desabilitado usa o par de tokens, sem opacidade, e o foco é contorno sólido", () => {
+    const { upload } = controlledUpload()
+    const { container } = render(<FileUpload upload={upload} disabled />)
+    const zone = container.querySelector('[data-slot="file-upload-dropzone"]')!
+    expect(zone.className).toContain("bg-disabled")
+    expect(zone.className).toContain("text-disabled-foreground")
+    expect(zone.className).not.toContain("opacity")
+    expect(zone.getAttribute("data-disabled")).toBe("true")
+    expect(fileInput(container).disabled).toBe(true)
+    expect(zone.className).toContain("has-[input:focus-visible]:outline-2")
+    expect(zone.className).not.toContain("ring-3")
+  })
 })

@@ -1,0 +1,13 @@
+{
+  "primary": "#9f1239",
+  "neutral": "stone",
+  "fonts": {
+    "text": "Source Sans 3",
+    "heading": { "family": "Fraunces", "fallback": "serif" },
+    "mono": "Fira Code"
+  },
+  "radius": "0rem",
+  "density": "compact",
+  "shadow": "none",
+  "icons": "phosphor"
+}

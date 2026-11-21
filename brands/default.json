@@ -1,0 +1,13 @@
+{
+  "primary": "#4f46e5",
+  "neutral": "slate",
+  "fonts": {
+    "text": "Inter",
+    "heading": "Inter",
+    "mono": "JetBrains Mono"
+  },
+  "radius": "0.625rem",
+  "density": "normal",
+  "shadow": "soft",
+  "icons": "lucide"
+}

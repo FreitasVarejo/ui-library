@@ -1,0 +1,50 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "states",
+      "type": "registry:block",
+      "title": "Estados",
+      "description": "Vazio, erro (com tentar de novo), carregando (esqueleto em lista, tabela, cartões e detalhe, anunciado a leitores de tela), 404 e sem permissão.",
+      "registryDependencies": ["button", "empty", "skeleton"],
+      "files": [
+        {
+          "path": "state-panel.tsx",
+          "type": "registry:component",
+          "target": "@components/states/state-panel.tsx"
+        },
+        {
+          "path": "empty-state.tsx",
+          "type": "registry:component",
+          "target": "@components/states/empty-state.tsx"
+        },
+        {
+          "path": "error-state.tsx",
+          "type": "registry:component",
+          "target": "@components/states/error-state.tsx"
+        },
+        {
+          "path": "loading-state.tsx",
+          "type": "registry:component",
+          "target": "@components/states/loading-state.tsx"
+        },
+        {
+          "path": "not-found-state.tsx",
+          "type": "registry:component",
+          "target": "@components/states/not-found-state.tsx"
+        },
+        {
+          "path": "forbidden-state.tsx",
+          "type": "registry:component",
+          "target": "@components/states/forbidden-state.tsx"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/states/index.ts"
+        }
+      ],
+      "docs": "Os ícones vêm de @/lib/icons, que um tema (theme-<nome>) instala: instale um tema antes."
+    }
+  ]
+}

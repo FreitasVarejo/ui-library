@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "app-shell",
+      "type": "registry:block",
+      "title": "App shell",
+      "description": "Casca de aplicação: barra lateral recolhível em modo ícone (Sheet no celular), cabeçalho com breadcrumb e menu do usuário, slot de conteúdo. Navegação por props e componente de link injetável.",
+      "registryDependencies": [
+        "avatar",
+        "breadcrumb",
+        "button",
+        "dropdown-menu",
+        "separator",
+        "sidebar",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "app-shell.tsx",
+          "type": "registry:component",
+          "target": "@components/app-shell/app-shell.tsx"
+        },
+        {
+          "path": "user-menu.tsx",
+          "type": "registry:component",
+          "target": "@components/app-shell/user-menu.tsx"
+        },
+        {
+          "path": "types.ts",
+          "type": "registry:component",
+          "target": "@components/app-shell/types.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/app-shell/index.ts"
+        }
+      ],
+      "docs": "Os ícones vêm de @/lib/icons, que um tema (theme-<nome>) instala: instale um tema antes. Exemplo: <AppShell groups={...} breadcrumb={...} user={...}>conteúdo</AppShell>."
+    }
+  ]
+}

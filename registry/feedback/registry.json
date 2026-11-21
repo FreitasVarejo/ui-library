@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "feedback",
+      "type": "registry:block",
+      "title": "Feedback",
+      "description": "Toasts com o sonner do shadcn (sucesso, erro, desfazer, promessa) e confirmação de ação destrutiva sobre alert-dialog, com foco inicial em cancelar.",
+      "dependencies": ["sonner"],
+      "registryDependencies": ["alert-dialog", "button", "sonner"],
+      "files": [
+        {
+          "path": "notify.ts",
+          "type": "registry:component",
+          "target": "@components/feedback/notify.ts"
+        },
+        {
+          "path": "app-toaster.tsx",
+          "type": "registry:component",
+          "target": "@components/feedback/app-toaster.tsx"
+        },
+        {
+          "path": "confirm-destructive.tsx",
+          "type": "registry:component",
+          "target": "@components/feedback/confirm-destructive.tsx"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/feedback/index.ts"
+        }
+      ],
+      "docs": "Os ícones vêm de @/lib/icons, que um tema (theme-<nome>) instala: instale um tema antes. Monte <AppToaster /> uma vez na raiz do app."
+    }
+  ]
+}

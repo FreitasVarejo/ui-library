@@ -1,0 +1,71 @@
+// Página do projeto consumidor montada só com blocos do registry.
+// O consume.sh copia este arquivo para src/App.tsx do projeto temporário.
+import { useState } from "react"
+
+import { Button } from "@/components/ui/button"
+import { AppShell } from "@/components/app-shell"
+import {
+  AppToaster,
+  notify,
+  useConfirmDestructive,
+} from "@/components/feedback"
+import {
+  EmptyState,
+  ErrorState,
+  ForbiddenState,
+  LoadingState,
+  NotFoundState,
+} from "@/components/states"
+import { Icons } from "@/lib/icons"
+
+export function App() {
+  const [view, setView] = useState("home")
+  const { confirm, dialog } = useConfirmDestructive()
+
+  return (
+    <>
+      <AppShell
+        groups={[
+          {
+            label: "Conteúdo",
+            items: [
+              { title: "Início", href: "#home", icon: <Icons.home />, active: view === "home" },
+              { title: "Busca", href: "#search", icon: <Icons.search />, active: view === "search" },
+              { title: "Envios", href: "#uploads", icon: <Icons.upload />, active: view === "uploads" },
+            ],
+          },
+        ]}
+        brand={<span className="px-2 font-heading font-semibold">Consumidor</span>}
+        breadcrumb={[{ label: "Início", href: "#home" }, { label: "Busca" }]}
+        user={{ name: "Pessoa Teste", email: "teste@exemplo.com" }}
+        userMenu={[{ label: "Sair", icon: <Icons.logout />, destructive: true }]}
+      >
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => notify.success("Salvo")}>Salvar</Button>
+          <Button
+            variant="destructive"
+            onClick={async () => {
+              if (await confirm({ title: "Excluir?" })) {
+                notify.undo("Excluído", { onUndo: () => setView("home") })
+              }
+            }}
+          >
+            Excluir
+          </Button>
+          <Button variant="outline" onClick={() => setView("search")}>
+            Buscar
+          </Button>
+        </div>
+        <LoadingState variant="cards" count={3} />
+        <EmptyState action={<Button>Enviar arquivo</Button>} />
+        <ErrorState onRetry={() => setView("home")} />
+        <NotFoundState />
+        <ForbiddenState />
+      </AppShell>
+      {dialog}
+      <AppToaster />
+    </>
+  )
+}
+
+export default App

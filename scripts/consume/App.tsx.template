@@ -1,6 +1,8 @@
 // Página do projeto consumidor montada só com blocos do registry.
 // O consume.sh copia este arquivo para src/App.tsx do projeto temporário.
 import { useState } from "react"
+import { createColumnHelper } from "@tanstack/react-table"
+import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import { AppShell } from "@/components/app-shell"
@@ -16,7 +18,32 @@ import {
   LoadingState,
   NotFoundState,
 } from "@/components/states"
+import { DataTable } from "@/components/data-table"
+import type { DataTableFeatures } from "@/components/data-table"
+import { DetailPage } from "@/components/detail-page"
+import { EntityForm } from "@/components/entity-form"
+import { SearchResults } from "@/components/search-results"
 import { Icons } from "@/lib/icons"
+
+interface Doc {
+  id: string
+  title: string
+  type: string
+}
+
+const docs: Doc[] = [
+  { id: "1", title: "Contrato de serviço", type: "PDF" },
+  { id: "2", title: "Ata da reunião", type: "DOCX" },
+]
+
+const helper = createColumnHelper<DataTableFeatures, Doc>()
+const columns = helper.columns([
+  helper.accessor("title", { header: "Documento" }),
+  helper.accessor("type", { header: "Tipo" }),
+])
+
+const schema = z.object({ title: z.string().min(3, "Mínimo de 3 caracteres.") })
+type Values = z.infer<typeof schema>
 
 export function App() {
   const [view, setView] = useState("home")
@@ -56,6 +83,46 @@ export function App() {
             Buscar
           </Button>
         </div>
+        <DataTable
+          columns={columns}
+          data={docs}
+          facets={[{ columnId: "type", label: "Tipo" }]}
+          bulkActions={[
+            { id: "reindex", label: "Reindexar", onAction: () => undefined },
+          ]}
+        />
+        <SearchResults
+          query="contrato"
+          onSearch={() => undefined}
+          status="ready"
+          results={[
+            {
+              id: "1",
+              title: "Contrato de serviço",
+              titleHighlights: [[0, 8]],
+              href: "#1",
+              snippet: "O contrato vale por doze meses.",
+              highlights: [[2, 10]],
+            },
+          ]}
+          facets={[{ id: "type", label: "Tipo", options: [{ value: "PDF", count: 1 }] }]}
+          selectedFacets={{}}
+          onFacetsChange={() => undefined}
+        />
+        <DetailPage
+          title="Contrato de serviço"
+          primaryAction={{ label: "Abrir", href: "#1" }}
+          destructiveAction={{ label: "Excluir", onConfirm: () => undefined }}
+          tabs={[{ value: "a", label: "Visão geral", content: <p>Conteúdo</p> }]}
+          metadata={[{ label: "Tipo", value: "PDF" }]}
+        />
+        <EntityForm<Values>
+          title="Novo documento"
+          schema={schema}
+          defaultValues={{ title: "" }}
+          fields={[{ name: "title", label: "Título" }]}
+          onSubmit={() => undefined}
+        />
         <LoadingState variant="cards" count={3} />
         <EmptyState action={<Button>Enviar arquivo</Button>} />
         <ErrorState onRetry={() => setView("home")} />

@@ -23,6 +23,10 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@/components/states": ["./registry/states/index.ts"],
+      "@/components/states/*": ["./registry/states/*"],
+      "@/components/feedback": ["./registry/feedback/index.ts"],
+      "@/components/feedback/*": ["./registry/feedback/*"],
       "@registry/*": ["./registry/*"],
       "@/*": ["./src/*"]
     }

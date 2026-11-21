@@ -28,6 +28,15 @@ import {
   FileQuestionMark as FileQuestionMarkIcon,
   ShieldAlert as ShieldAlertIcon,
   LoaderCircle as LoaderCircleIcon,
+  ArrowUpDown as ArrowUpDownIcon,
+  ArrowUp as ArrowUpIcon,
+  ArrowDown as ArrowDownIcon,
+  ListFilter as ListFilterIcon,
+  Columns3 as Columns3Icon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  Ellipsis as EllipsisIcon,
+  Pencil as PencilIcon,
 } from "lucide-react"
 
 export const Icons = {
@@ -57,6 +66,15 @@ export const Icons = {
   notFound: FileQuestionMarkIcon,
   forbidden: ShieldAlertIcon,
   loading: LoaderCircleIcon,
+  sort: ArrowUpDownIcon,
+  sortAsc: ArrowUpIcon,
+  sortDesc: ArrowDownIcon,
+  filter: ListFilterIcon,
+  columns: Columns3Icon,
+  chevronLeft: ChevronLeftIcon,
+  chevronRight: ChevronRightIcon,
+  more: EllipsisIcon,
+  edit: PencilIcon,
 } as const
 
 export type IconName = keyof typeof Icons

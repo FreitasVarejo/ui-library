@@ -20,6 +20,14 @@ Regras:
 - Os blocos trazem texto padrão em pt-BR e aceitam todo texto por prop; o
   idioma é do projeto.
 
+Instalar sem terminal interativo:
+
+- Arquivo já existente e diferente faz o CLI perguntar "overwrite?"; sem TTY ele
+  sai 0 sem criar os arquivos do item. Antes: `npx shadcn@latest add <item>
+  --dry-run` lista o que seria criado e o que seria sobrescrito, e `--diff
+  <arquivo>` mostra a diferença. Só use `--overwrite` depois de olhar.
+- Depois do `add`, confira que os arquivos do item existem.
+
 Identidade visual:
 
 - Os blocos usam `@/lib/icons`, que o tema instala: instale um `theme-<nome>`

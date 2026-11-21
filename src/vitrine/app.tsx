@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button"
 import { AppToaster } from "@registry/feedback/app-toaster"
+import { DataTablePage } from "./pages/data-table-page"
+import { DetailPageDemo } from "./pages/detail-page-page"
+import { EntityFormPage } from "./pages/entity-form-page"
 import { FeedbackPage } from "./pages/feedback-page"
+import { SearchResultsPage } from "./pages/search-results-page"
 import { ShellPage } from "./pages/shell-page"
 import { StatesPage } from "./pages/states-page"
 import { ThemePage } from "./pages/theme-page"
@@ -11,6 +15,10 @@ const ITEMS = [
   { id: "app-shell", label: "app-shell", page: ShellPage },
   { id: "states", label: "states", page: StatesPage },
   { id: "feedback", label: "feedback", page: FeedbackPage },
+  { id: "data-table", label: "data-table", page: DataTablePage },
+  { id: "search-results", label: "search-results", page: SearchResultsPage },
+  { id: "detail-page", label: "detail-page", page: DetailPageDemo },
+  { id: "entity-form", label: "entity-form", page: EntityFormPage },
   { id: "theme", label: "tema", page: ThemePage },
 ] as const
 

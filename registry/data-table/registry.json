@@ -1,0 +1,86 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "data-table",
+      "type": "registry:block",
+      "title": "Tabela de dados",
+      "description": "Tabela sobre o TanStack Table v9: busca, filtros por faceta com contagem, ordenação, paginação, colunas visíveis e seleção com ações em lote. Modo client e modo server (estado por props). Estados de carregando, vazio e erro.",
+      "dependencies": ["@tanstack/react-table@^9"],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "checkbox",
+        "dropdown-menu",
+        "input",
+        "select",
+        "table",
+        "FreitasVarejo/ui/states",
+        "FreitasVarejo/ui/feedback"
+      ],
+      "files": [
+        {
+          "path": "data-table.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table/data-table.tsx"
+        },
+        {
+          "path": "data-table-bulk-bar.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table/data-table-bulk-bar.tsx"
+        },
+        {
+          "path": "data-table-column-header.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table/data-table-column-header.tsx"
+        },
+        {
+          "path": "data-table-facet-filter.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table/data-table-facet-filter.tsx"
+        },
+        {
+          "path": "data-table-pagination.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table/data-table-pagination.tsx"
+        },
+        {
+          "path": "data-table-toolbar.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table/data-table-toolbar.tsx"
+        },
+        {
+          "path": "data-table-view-options.tsx",
+          "type": "registry:component",
+          "target": "@components/data-table/data-table-view-options.tsx"
+        },
+        {
+          "path": "features.ts",
+          "type": "registry:component",
+          "target": "@components/data-table/features.ts"
+        },
+        {
+          "path": "filters.ts",
+          "type": "registry:component",
+          "target": "@components/data-table/filters.ts"
+        },
+        {
+          "path": "types.ts",
+          "type": "registry:component",
+          "target": "@components/data-table/types.ts"
+        },
+        {
+          "path": "use-controllable.ts",
+          "type": "registry:component",
+          "target": "@components/data-table/use-controllable.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/data-table/index.ts"
+        }
+      ],
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/states e FreitasVarejo/ui/feedback (o CLI os instala junto, na branch padrão). Colunas: createColumnHelper<DataTableFeatures, Linha>() do @tanstack/react-table; header em texto ganha ordenação sozinho. Modo client: <DataTable columns data facets bulkActions />. Modo server: mode=\"server\" com rowCount e sorting, search, facetFilters, pagination controlados por props + callbacks. Densidade: vem do --spacing do tema. Texto sobrescrevível por labels."
+    }
+  ]
+}

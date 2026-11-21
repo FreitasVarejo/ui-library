@@ -8,6 +8,7 @@ npx shadcn@latest init -t vite -b base
 npx shadcn@latest add FreitasVarejo/ui/theme-default
 npx shadcn@latest add FreitasVarejo/ui/app-shell FreitasVarejo/ui/states FreitasVarejo/ui/feedback
 npx shadcn@latest add FreitasVarejo/ui/agent-kit
+npx shadcn@latest add FreitasVarejo/ui/data-table FreitasVarejo/ui/search-results FreitasVarejo/ui/detail-page FreitasVarejo/ui/entity-form
 ```
 
 `npx shadcn@latest list FreitasVarejo/ui` mostra os itens. Para trocar a

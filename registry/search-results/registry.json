@@ -1,0 +1,53 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "search-results",
+      "type": "registry:block",
+      "title": "Resultados de busca",
+      "description": "Campo de busca, filtros por faceta (coluna lateral; Sheet no celular), contagem, ordenação e resultados com trecho destacado por faixas (<mark>, nunca HTML cru), metadados e link injetável. Estados: sem busca, carregando, sem resultado e erro.",
+      "registryDependencies": [
+        "button",
+        "checkbox",
+        "input",
+        "label",
+        "select",
+        "sheet",
+        "FreitasVarejo/ui/states"
+      ],
+      "files": [
+        {
+          "path": "search-results.tsx",
+          "type": "registry:component",
+          "target": "@components/search-results/search-results.tsx"
+        },
+        {
+          "path": "facet-panel.tsx",
+          "type": "registry:component",
+          "target": "@components/search-results/facet-panel.tsx"
+        },
+        {
+          "path": "highlighted-text.tsx",
+          "type": "registry:component",
+          "target": "@components/search-results/highlighted-text.tsx"
+        },
+        {
+          "path": "highlight.ts",
+          "type": "registry:component",
+          "target": "@components/search-results/highlight.ts"
+        },
+        {
+          "path": "types.ts",
+          "type": "registry:component",
+          "target": "@components/search-results/types.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/search-results/index.ts"
+        }
+      ],
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/states (o CLI instala junto, na branch padrão). Quem busca é o pai: <SearchResults query onSearch status results total facets selectedFacets onFacetsChange sort onSortChange linkComponent />. Destaque: cada resultado traz highlights=[[início, fim], ...] em unidades UTF-16 de snippet (e titleHighlights de title); o texto nunca vira HTML. Texto sobrescrevível por labels."
+    }
+  ]
+}

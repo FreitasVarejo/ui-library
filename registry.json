@@ -5,7 +5,11 @@
   "include": [
     "registry/agent-kit/registry.json",
     "registry/app-shell/registry.json",
+    "registry/data-table/registry.json",
+    "registry/detail-page/registry.json",
+    "registry/entity-form/registry.json",
     "registry/feedback/registry.json",
+    "registry/search-results/registry.json",
     "registry/states/registry.json",
     "registry/themes/default/registry.json",
     "registry/themes/editorial/registry.json"

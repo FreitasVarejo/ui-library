@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "detail-page",
+      "type": "registry:block",
+      "title": "Página de detalhe",
+      "description": "Cabeçalho com título, metadados e ações (primária, secundárias num menu, destrutiva com confirmação), abas e painel lateral de metadados que desce para baixo do conteúdo no celular. Estados de carregando, erro e não encontrado.",
+      "registryDependencies": [
+        "button",
+        "dropdown-menu",
+        "tabs",
+        "FreitasVarejo/ui/states",
+        "FreitasVarejo/ui/feedback"
+      ],
+      "files": [
+        {
+          "path": "detail-page.tsx",
+          "type": "registry:component",
+          "target": "@components/detail-page/detail-page.tsx"
+        },
+        {
+          "path": "types.ts",
+          "type": "registry:component",
+          "target": "@components/detail-page/types.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/detail-page/index.ts"
+        }
+      ],
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/states e FreitasVarejo/ui/feedback (o CLI os instala junto, na branch padrão). Exemplo: <DetailPage title badges summary primaryAction secondaryActions destructiveAction tabs metadata linkComponent />. Abas controláveis por tab + onTabChange (para pôr a aba na URL). Texto sobrescrevível por labels."
+    }
+  ]
+}

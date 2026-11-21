@@ -182,6 +182,172 @@ for (const brand of brands) {
       await shot(page, `${tag}--feedback-confirm`)
       await page.keyboard.press("Escape")
       await page.close()
+
+      // data-table: facetas com contagem, seleção com barra de lote, modo server
+      page = await open(context, `${tag} data-table`, {
+        ...common,
+        item: "data-table",
+      })
+      await noOverflow(page, `${tag} data-table`)
+      const clientTable = page.locator('[data-slot="data-table"]').first()
+      check(
+        (await clientTable.getByRole("row").count()) === 11,
+        `${tag}: modo client esperava cabeçalho + 10 linhas`
+      )
+      await shot(page, `${tag}--data-table`, { fullPage: true })
+      await clientTable.getByRole("button", { name: /^Tipo\s*\d*$/ }).click()
+      await page.getByRole("menuitemcheckbox", { name: /PDF/ }).click()
+      check(
+        (
+          await page
+            .getByRole("menuitemcheckbox", { name: /PDF/ })
+            .textContent()
+        )?.match(/\d+/) !== null,
+        `${tag}: faceta sem contagem`
+      )
+      await page.waitForTimeout(200)
+      await shot(page, `${tag}--data-table-facet`)
+      await page.keyboard.press("Escape")
+      await clientTable.getByRole("checkbox").nth(1).click()
+      await clientTable.getByRole("checkbox").nth(2).click()
+      await clientTable.getByRole("region", { name: "Ações em lote" }).waitFor()
+      await shot(page, `${tag}--data-table-bulk`)
+      await clientTable.getByRole("button", { name: "Excluir" }).click()
+      const bulkCancel = page.getByRole("button", { name: "Cancelar" })
+      await bulkCancel.waitFor()
+      await page.waitForTimeout(250)
+      check(
+        await bulkCancel.evaluate((el) => el === document.activeElement),
+        `${tag}: foco da confirmação em lote não está em Cancelar`
+      )
+      await page.keyboard.press("Escape")
+      await noOverflow(page, `${tag} data-table com barra`)
+      await page.close()
+
+      // search-results: destaque com <mark>, filtros em Sheet no celular
+      page = await open(context, `${tag} search-results`, {
+        ...common,
+        item: "search-results",
+      })
+      await page
+        .getByText(/resultados? para/)
+        .first()
+        .waitFor()
+      await noOverflow(page, `${tag} search-results`)
+      check(
+        (await page.locator("mark").count()) >= 2,
+        `${tag}: busca sem trecho destacado`
+      )
+      const liveSearch = page.locator('[data-slot="search-results"]').first()
+      const sideFilters = page
+        .getByRole("complementary", { name: "Filtros" })
+        .first()
+      if (viewport.name === "mobile") {
+        check(
+          !(await sideFilters.isVisible()),
+          `${tag}: filtros laterais visíveis no celular`
+        )
+        await liveSearch.getByRole("button", { name: /^Filtros/ }).click()
+        await page.getByRole("dialog").waitFor()
+        await page.waitForTimeout(350)
+        await shot(page, `${tag}--search-results-filters-sheet`)
+        await page.getByRole("checkbox", { name: /DOCX/ }).click()
+        await page.keyboard.press("Escape")
+        await page.getByRole("dialog").waitFor({ state: "detached" })
+        await noOverflow(page, `${tag} search-results após o Sheet`)
+      } else {
+        check(
+          await sideFilters.isVisible(),
+          `${tag}: filtros laterais ausentes no desktop`
+        )
+        check(
+          (await liveSearch
+            .getByRole("button", { name: /^Filtros/ })
+            .count()) === 0,
+          `${tag}: botão de filtros visível no desktop`
+        )
+      }
+      await shot(page, `${tag}--search-results`, { fullPage: true })
+      await page.close()
+
+      // detail-page: painel lateral desce no celular; destrutiva confirma
+      page = await open(context, `${tag} detail-page`, {
+        ...common,
+        item: "detail-page",
+      })
+      await noOverflow(page, `${tag} detail-page`)
+      const content = page.getByText("O prazo de vigência").first()
+      const asideBox = await page
+        .getByRole("complementary", { name: "Detalhes" })
+        .first()
+        .boundingBox()
+      const contentBox = await content.boundingBox()
+      if (viewport.name === "mobile")
+        check(
+          asideBox.y > contentBox.y + contentBox.height,
+          `${tag}: painel lateral não desceu para baixo do conteúdo`
+        )
+      else
+        check(
+          asideBox.x > contentBox.x + contentBox.width,
+          `${tag}: painel lateral não ficou ao lado do conteúdo`
+        )
+      await shot(page, `${tag}--detail-page`, { fullPage: true })
+      await page.getByRole("button", { name: "Mais ações" }).first().click()
+      await page.getByRole("menuitem", { name: "Excluir documento" }).click()
+      const detailCancel = page.getByRole("button", { name: "Cancelar" })
+      await detailCancel.waitFor()
+      await page.waitForTimeout(250)
+      check(
+        await detailCancel.evaluate((el) => el === document.activeElement),
+        `${tag}: foco da confirmação não está em Cancelar`
+      )
+      await shot(page, `${tag}--detail-page-confirm`)
+      await page.close()
+
+      // entity-form: erro por campo, erro geral e aviso no Sheet
+      page = await open(context, `${tag} entity-form`, {
+        ...common,
+        item: "entity-form",
+      })
+      await noOverflow(page, `${tag} entity-form`)
+      await page.getByRole("button", { name: "Salvar" }).first().click()
+      await page
+        .getByText("O título precisa de ao menos 3 caracteres.")
+        .waitFor()
+      check(
+        (await page.locator('[data-slot="field-error"]').count()) >= 2,
+        `${tag}: esperava erro em mais de um campo`
+      )
+      check(
+        await page
+          .getByLabel("Título")
+          .first()
+          .evaluate((el) => el === document.activeElement),
+        `${tag}: foco não foi para o primeiro campo inválido`
+      )
+      await shot(page, `${tag}--entity-form-errors`, { fullPage: true })
+      await page.getByRole("button", { name: "Erro geral" }).click()
+      await page.getByLabel("Título").first().fill("Contrato")
+      await page.getByLabel("E-mail do autor").first().fill("ana@exemplo.com")
+      await page.getByRole("combobox", { name: "Tipo" }).click()
+      await page.getByRole("option", { name: "PDF" }).click()
+      await page.getByRole("button", { name: "Salvar" }).first().click()
+      await page.getByRole("button", { name: "Salvando…" }).waitFor()
+      await page.getByText("O servidor não respondeu.").waitFor()
+      await shot(page, `${tag}--entity-form-general-error`, { fullPage: true })
+      await page.getByRole("button", { name: "Novo documento" }).click()
+      await page.getByRole("dialog").waitFor()
+      await page.getByRole("dialog").getByLabel("Título").fill("Rascunho")
+      await page.keyboard.press("Escape")
+      await page.getByRole("alertdialog").waitFor()
+      await page.waitForTimeout(300)
+      check(
+        await page.locator('[data-slot="sheet-content"]').first().isVisible(),
+        `${tag}: o Sheet fechou apesar das alterações`
+      )
+      await shot(page, `${tag}--entity-form-sheet-discard`)
+      await page.close()
       await context.close()
     }
   }

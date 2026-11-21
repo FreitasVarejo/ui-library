@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "entity-form",
+      "type": "registry:block",
+      "title": "Formulário de entidade",
+      "description": "Formulário de criar e editar sobre react-hook-form, zod e o field do shadcn: página ou Sheet, erro por campo, erro geral, salvar com estado de envio e aviso de alterações não salvas ao fechar o Sheet.",
+      "dependencies": [
+        "react-hook-form@^7",
+        "@hookform/resolvers@^7",
+        "zod@^4"
+      ],
+      "registryDependencies": [
+        "button",
+        "checkbox",
+        "field",
+        "input",
+        "select",
+        "sheet",
+        "textarea",
+        "FreitasVarejo/ui/feedback"
+      ],
+      "files": [
+        {
+          "path": "entity-form.tsx",
+          "type": "registry:component",
+          "target": "@components/entity-form/entity-form.tsx"
+        },
+        {
+          "path": "types.ts",
+          "type": "registry:component",
+          "target": "@components/entity-form/types.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/entity-form/index.ts"
+        }
+      ],
+      "docs": "Instale um tema (theme-<nome>) antes: os ícones vêm de @/lib/icons. Depende de FreitasVarejo/ui/feedback (o CLI o instala junto, na branch padrão). Exemplo: <EntityForm schema={zodSchema} defaultValues fields onSubmit title presentation=\"sheet\" open onOpenChange />. Use key=<id> para trocar de registro. Texto sobrescrevível por labels."
+    }
+  ]
+}

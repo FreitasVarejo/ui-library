@@ -7,10 +7,19 @@ import { defineConfig } from "vitest/config"
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
-    alias: {
-      "@registry": resolve(import.meta.dirname, "./registry"),
-      "@": resolve(import.meta.dirname, "./src"),
-    },
+    // Blocos que dependem de outro bloco importam `@/components/<bloco>`, como
+    // no consumidor; na vitrine esses dois apontam para registry/ (fonte única).
+    alias: [
+      {
+        find: /^@\/components\/(states|feedback)(?=\/|$)/,
+        replacement: resolve(import.meta.dirname, "./registry/$1"),
+      },
+      {
+        find: /^@registry/,
+        replacement: resolve(import.meta.dirname, "./registry"),
+      },
+      { find: /^@(?=\/)/, replacement: resolve(import.meta.dirname, "./src") },
+    ],
   },
   test: {
     include: ["tests/**/*.test.{ts,tsx}"],

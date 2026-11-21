@@ -28,6 +28,15 @@ import {
   FileDashed as FileDashedIcon,
   LockKey as LockKeyIcon,
   CircleNotch as CircleNotchIcon,
+  ArrowsDownUp as ArrowsDownUpIcon,
+  ArrowUp as ArrowUpIcon,
+  ArrowDown as ArrowDownIcon,
+  Funnel as FunnelIcon,
+  Columns as ColumnsIcon,
+  CaretLeft as CaretLeftIcon,
+  CaretRight as CaretRightIcon,
+  DotsThree as DotsThreeIcon,
+  PencilSimple as PencilSimpleIcon,
 } from "@phosphor-icons/react"
 
 export const Icons = {
@@ -57,6 +66,15 @@ export const Icons = {
   notFound: FileDashedIcon,
   forbidden: LockKeyIcon,
   loading: CircleNotchIcon,
+  sort: ArrowsDownUpIcon,
+  sortAsc: ArrowUpIcon,
+  sortDesc: ArrowDownIcon,
+  filter: FunnelIcon,
+  columns: ColumnsIcon,
+  chevronLeft: CaretLeftIcon,
+  chevronRight: CaretRightIcon,
+  more: DotsThreeIcon,
+  edit: PencilSimpleIcon,
 } as const
 
 export type IconName = keyof typeof Icons

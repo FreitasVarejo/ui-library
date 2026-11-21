@@ -17,10 +17,8 @@ Biblioteca pessoal de blocos React distribuída como registry do shadcn/ui
   - `src/lib/icons.tsx`: `@/lib/icons` da vitrine; no consumidor é o do tema.
   - `scripts/`: gerador de tema, `consume.sh` (teste de consumo sem push) e
     `fake-github.mjs`.
-- **Tema novo**: `npm run theme -- brands/<nome>.json` gera `theme-<nome>` e
-  falha (exit 1, sem escrever nada) se algum par texto/fundo ficar abaixo de
-  4.5:1. `npm run theme:all` regera todos; `npm run theme:check` compara com o
-  versionado.
+- **Tema novo**: `npm run theme -- brands/<nome>.json`; os outros scripts
+  `theme:*` estão no `package.json`.
 - **Regras dos itens**
   - Identificadores e arquivos em inglês; texto visível em pt-BR, sobrescrevível
     por prop.

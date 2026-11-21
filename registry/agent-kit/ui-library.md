@@ -17,7 +17,8 @@ Regras:
 - Ícone só de `@/lib/icons` (`Icons.search`, `Icons.empty`...). Não importe
   `lucide-react` nem outro pacote de ícones em código de tela.
 - Um único destaque animado por página.
-- Texto visível em pt-BR. Os blocos aceitam todo texto por prop.
+- Os blocos trazem texto padrão em pt-BR e aceitam todo texto por prop; o
+  idioma é do projeto.
 
 Identidade visual:
 

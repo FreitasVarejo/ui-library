@@ -1,0 +1,18 @@
+{
+  "primary": "#c45322",
+  "neutral": "zinc",
+  "fonts": {
+    "text": "Inter",
+    "heading": {
+      "family": "Barlow Condensed",
+      "fallback": "sans-serif",
+      "weights": [600, 700]
+    },
+    "mono": "JetBrains Mono"
+  },
+  "radius": "0.5rem",
+  "density": "normal",
+  "shadow": "soft",
+  "target": "comfortable",
+  "icons": "lucide"
+}

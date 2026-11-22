@@ -13,6 +13,7 @@
     "registry/file-upload/registry.json",
     "registry/jobs-panel/registry.json",
     "registry/search-results/registry.json",
+    "registry/sheet/registry.json",
     "registry/states/registry.json",
     "registry/themes/aurora/registry.json",
     "registry/themes/default/registry.json",

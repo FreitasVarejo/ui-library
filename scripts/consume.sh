@@ -46,7 +46,7 @@ expect_not() { # arquivo, texto
 step "registry GitHub: validate e list"
 run "$SHADCN" registry validate FreitasVarejo/ui-library
 LIST="$(cd "$WORK" && timeout 120 "$SHADCN" list FreitasVarejo/ui-library </dev/null)"
-for item in agent-kit app-shell command-palette data-table detail-page entity-form feedback file-upload jobs-panel search-results states theme-default theme-editorial; do
+for item in agent-kit app-shell command-palette data-table detail-page entity-form feedback file-upload jobs-panel search-results sheet states theme-default theme-editorial; do
   grep -q "$item" <<<"$LIST" || { echo "FALHOU: list não mostra $item"; echo "$LIST"; exit 1; }
 done
 echo "list mostra os itens do registry"
@@ -57,8 +57,8 @@ run "$SHADCN" init -t vite -b base -p nova -n app -y --no-monorepo --no-rtl
 cd app
 expect components.json '"style": "base-nova"'
 
-BLOCKS=(app-shell states feedback data-table search-results detail-page entity-form file-upload jobs-panel command-palette)
-OWN_DIRS='(states|feedback|app-shell|data-table|search-results|detail-page|entity-form|file-upload|jobs-panel|command-palette)'
+BLOCKS=(app-shell states feedback data-table search-results detail-page entity-form file-upload jobs-panel command-palette sheet)
+OWN_DIRS='(states|feedback|app-shell|data-table|search-results|detail-page|entity-form|file-upload|jobs-panel|command-palette|sheet)'
 
 # O CLI do shadcn tem um defeito conhecido: o mesmo arquivo do shadcn (ex.:
 # ui/alert-dialog.tsx) sai com ou sem "use client" conforme a posição no lote,
@@ -145,6 +145,17 @@ test -f src/components/ui/progress.tsx
 test -f src/components/ui/command.tsx
 test -f src/components/ui/dialog.tsx
 expect package.json '"cmdk"'
+
+step "bloco sem tema nem dependência entre itens: sheet"
+# Só depende do Base UI e do utils do shadcn: não traz ícone, nem states, nem feedback.
+install sheet
+test -f src/components/sheet/sheet.tsx
+test -f src/components/sheet/sheet-stack.ts
+test -f src/components/sheet/focus-return.ts
+test -f src/components/sheet/index.ts
+test -f src/lib/utils.ts
+expect src/components/sheet/sheet.tsx '@base-ui/react/drawer'
+expect_not src/components/sheet/sheet.tsx '@/lib/icons'
 
 step "página com os blocos: typecheck e build"
 cp "$REPO/scripts/consume/App.tsx.template" src/App.tsx

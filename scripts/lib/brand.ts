@@ -13,6 +13,11 @@ export interface BrandFont {
   /** nome do Google Fonts, ex.: "Source Sans 3" */
   family: string
   fallback: Fallback
+  /**
+   * pesos de uma fonte sem versão variável: usa `@fontsource/<família>` estático
+   * (um import por peso) em vez de `@fontsource-variable/<família>`
+   */
+  weights?: number[]
 }
 
 export interface Brand {
@@ -85,7 +90,25 @@ function font(
     if (!FALLBACKS.includes(fallback as Fallback)) {
       fail(file, `fonts.${key}.fallback deve ser um de ${FALLBACKS.join(", ")}`)
     }
-    return { family: family.trim(), fallback: fallback as Fallback }
+    const weights = entry.weights
+    if (
+      weights !== undefined &&
+      (!Array.isArray(weights) ||
+        weights.length === 0 ||
+        !weights.every(
+          (weight) => Number.isInteger(weight) && weight >= 100 && weight <= 900
+        ))
+    ) {
+      fail(
+        file,
+        `fonts.${key}.weights deve ser uma lista de pesos de 100 a 900`
+      )
+    }
+    return {
+      family: family.trim(),
+      fallback: fallback as Fallback,
+      ...(weights === undefined ? {} : { weights: weights as number[] }),
+    }
   }
   return fail(file, `campo "fonts.${key}" ausente`)
 }

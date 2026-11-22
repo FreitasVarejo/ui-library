@@ -25,13 +25,27 @@ function slug(family: string): string {
   return family.toLowerCase().replace(/\s+/g, "-")
 }
 
-/** Pacote @fontsource variável de uma família do Google Fonts. */
+/**
+ * Pacote @fontsource de uma família do Google Fonts: o variável, ou o estático
+ * quando a marca lista `weights` (famílias sem versão variável).
+ */
 export function fontPackage(font: BrandFont): string {
-  return `@fontsource-variable/${slug(font.family)}`
+  return font.weights
+    ? `@fontsource/${slug(font.family)}`
+    : `@fontsource-variable/${slug(font.family)}`
+}
+
+/** Especificadores de `@import` de uma fonte: um por peso no estático. */
+export function fontImports(font: BrandFont): string[] {
+  const pkg = fontPackage(font)
+  return font.weights
+    ? font.weights.map((weight) => `${pkg}/${weight}.css`)
+    : [pkg]
 }
 
 export function fontStack(font: BrandFont): string {
-  return `'${font.family} Variable', ${font.fallback}`
+  const family = font.weights ? font.family : `${font.family} Variable`
+  return `'${family}', ${font.fallback}`
 }
 
 function uniqueFonts(brand: Brand): BrandFont[] {
@@ -127,7 +141,7 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
     },
     css: {
       ...Object.fromEntries(
-        fontList.map((font) => [`@import "${fontPackage(font)}"`, {}])
+        fontList.flatMap(fontImports).map((spec) => [`@import "${spec}"`, {}])
       ),
       ...cssField(rules),
     },
@@ -144,7 +158,7 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
 
   const vitrine = [
     `/* Gerado por scripts/theme.ts a partir de brands/${brand.name}.json. Não edite. */`,
-    ...fontList.map((font) => `@import "${fontPackage(font)}";`),
+    ...fontList.flatMap(fontImports).map((spec) => `@import "${spec}";`),
     ``,
     cssBlock(`html[data-brand="${brand.name}"]`, {
       ...fonts,

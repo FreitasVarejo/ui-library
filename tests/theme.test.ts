@@ -71,6 +71,41 @@ describe("contraste do tema", () => {
     expect(existsSync(join(root, "src/themes/low-contrast.css"))).toBe(false)
   })
 
+  it("fonte sem versão variável usa @fontsource estático, um import por peso", () => {
+    const base = {
+      primary: "#4f46e5",
+      neutral: "slate",
+      fonts: {
+        text: "Inter",
+        heading: { family: "Barlow Condensed", weights: [600, 700] },
+        mono: "JetBrains Mono",
+      },
+      radius: "0.5rem",
+      density: "normal",
+      shadow: "soft",
+      icons: "lucide",
+    }
+    const theme = generateTheme(parseBrand("estatica", "estatica.json", base))
+    const fragment = theme.files.get("registry/themes/estatica/registry.json")
+    const item = JSON.parse(fragment ?? "{}").items[0]
+    expect(item.dependencies).toContain("@fontsource/barlow-condensed")
+    expect(item.dependencies).not.toContain(
+      "@fontsource-variable/barlow-condensed"
+    )
+    expect(item.cssVars.theme["font-heading"]).toBe(
+      "'Barlow Condensed', sans-serif"
+    )
+    expect(Object.keys(item.css)).toContain(
+      '@import "@fontsource/barlow-condensed/700.css"'
+    )
+    expect(() =>
+      parseBrand("x", "x.json", {
+        ...base,
+        fonts: { ...base.fonts, heading: { family: "A", weights: [] } },
+      })
+    ).toThrow(BrandError)
+  })
+
   it("falha em campo inválido da marca", () => {
     expect(() =>
       parseBrand("x", "x.json", {

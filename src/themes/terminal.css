@@ -22,6 +22,7 @@ html[data-brand="terminal"] {
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.508 0.105 165.612);
   --primary-foreground: oklch(1 0 0);
+  --primary-text: oklch(0.508 0.105 165.612);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -61,6 +62,7 @@ html[data-brand="terminal"].dark {
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.72 0.105 165.612);
   --primary-foreground: oklch(0.145 0 0);
+  --primary-text: oklch(0.72 0.105 165.612);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -110,6 +112,13 @@ html[data-brand="terminal"] [data-slot="input-group"]:has([data-slot="command-in
 
 html[data-brand="terminal"] [data-slot="field-label"]:has(:focus-visible) {
   --tw-ring-shadow: 0 0 #0000;
+}
+
+html[data-brand="terminal"] [data-slot][class~="group/button"][class~="text-primary"],
+html[data-brand="terminal"] [data-slot="badge"][class~="text-primary"],
+html[data-brand="terminal"] [data-slot="field-description"] > a:hover,
+html[data-brand="terminal"] [data-slot="empty-description"] > a:hover {
+  color: var(--primary-text);
 }
 
 @media (hover: hover) {

@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process"
-import { existsSync, readFileSync } from "node:fs"
+import { existsSync, readdirSync, readFileSync } from "node:fs"
 import { join, resolve } from "node:path"
 import { clampRgb, converter, parse, wcagContrast } from "culori"
 import { describe, expect, it } from "vitest"
@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest"
 import { BrandError, parseBrand } from "../scripts/lib/brand.ts"
 import { generateTheme } from "../scripts/lib/generate.ts"
 import { ICON_KEYS, ICON_PACKS } from "../scripts/lib/icon-packs.ts"
-import { contrast } from "../scripts/lib/palette.ts"
+import { contrast, toHex } from "../scripts/lib/palette.ts"
 import {
   CONTRAST_PAIRS,
   checkContrast,
@@ -28,6 +28,11 @@ function withBrand(name: string, changes: Record<string, unknown>) {
   const file = join(root, "brands", `${name}.json`)
   const data = { ...JSON.parse(readFileSync(file, "utf8")), ...changes }
   return parseBrand(name, file, data)
+}
+
+// a marca jiujitsu como marca só escura (#c45322, zinc, texto branco)
+function darkOnly() {
+  return withBrand("jiujitsu", { scheme: "dark" })
 }
 
 function ratio(
@@ -377,6 +382,177 @@ describe("contraste do tema", () => {
   })
 })
 
+describe("primary-text: a primária usada como texto", () => {
+  const SURFACES = ["background", "card", "popover"]
+  const SAMPLES = readdirSync(join(root, "brands"))
+    .map((file) => file.replace(/\.json$/, ""))
+    .filter((name) => name !== "jiujitsu")
+
+  it("os pares pedem 4.5:1 de texto sobre fundo, cartão e popover", () => {
+    for (const surface of SURFACES) {
+      const pair = CONTRAST_PAIRS.find(
+        ([fg, bg]) => fg === "primary-text" && bg === surface
+      )
+      expect(pair, `primary-text/${surface}`).toBeTruthy()
+      expect(pair![3] ?? 4.5).toBe(4.5)
+      expect(pair![2]).toMatch(/primária/)
+    }
+  })
+
+  for (const name of SAMPLES) {
+    it(`${name}: a primária já passa, então o texto sai igual a ela`, () => {
+      const tokens = deriveTokens(brand(name))
+      for (const mode of ["light", "dark"] as const) {
+        expect(tokens[mode]["primary-text"].css, mode).toBe(
+          tokens[mode].primary.css
+        )
+        for (const surface of SURFACES) {
+          expect(
+            ratio(tokens, mode, "primary-text", surface),
+            `${mode} ${surface}`
+          ).toBeGreaterThanOrEqual(4.5)
+        }
+      }
+    })
+  }
+
+  it("a primária que não passa vira um tom só de luminosidade, o mínimo que passa", () => {
+    // jiujitsu: #c45322 sobre zinc-900 (cartão) é 3.89:1 e sobre zinc-950 é 4.36:1
+    const tokens = deriveTokens(darkOnly())
+    const dark = tokens.dark
+    expect(toHex(dark.primary.color)).toBe("#c45322")
+    expect(ratio(tokens, "dark", "primary", "card")).toBeCloseTo(3.89, 2)
+    expect(ratio(tokens, "dark", "primary", "background")).toBeCloseTo(4.36, 2)
+    expect(dark["primary-text"].css).not.toBe(dark.primary.css)
+    expect(toHex(dark["primary-text"].color)).toBe("#d25f30")
+    const { l, c, h } = dark["primary-text"].color
+    expect(l).toBeGreaterThan(dark.primary.color.l)
+    expect(c).toBe(dark.primary.color.c)
+    expect(h).toBe(dark.primary.color.h)
+    for (const surface of SURFACES) {
+      expect(
+        ratio(tokens, "dark", "primary-text", surface),
+        surface
+      ).toBeGreaterThanOrEqual(4.5)
+    }
+    // um passo a menos já reprova em alguma superfície
+    const below = { ...dark["primary-text"].color, l: l - 0.005 }
+    expect(
+      SURFACES.every((surface) => contrast(below, dark[surface].color) >= 4.5)
+    ).toBe(false)
+  })
+
+  it("no claro a derivada escurece", () => {
+    const tokens = deriveTokens(withBrand("default", { primary: "#f97316" }))
+    const light = tokens.light
+    expect(ratio(tokens, "light", "primary", "card")).toBeLessThan(4.5)
+    expect(light["primary-text"].color.l).toBeLessThan(light.primary.color.l)
+    for (const surface of SURFACES) {
+      expect(
+        ratio(tokens, "light", "primary-text", surface),
+        surface
+      ).toBeGreaterThanOrEqual(4.5)
+    }
+    // o escuro dessa marca já passa: igual à primária
+    expect(tokens.dark["primary-text"].css).toBe(tokens.dark.primary.css)
+  })
+
+  it("o portão reprova uma marca cuja primária derivada não alcançasse", () => {
+    const tokens = deriveTokens(darkOnly())
+    tokens.dark["primary-text"] = tokens.dark.primary
+    const failures = checkContrast(tokens).filter(
+      (f) => f.foreground === "primary-text"
+    )
+    expect(failures.map((f) => f.background).sort()).toEqual([
+      "background",
+      "card",
+      "popover",
+    ])
+    expect(failures.every((f) => f.minimum === 4.5)).toBe(true)
+    expect(failures[0].message).toContain("a cor primária usada como texto")
+  })
+})
+
+describe("marca só escura (scheme: dark)", () => {
+  it("o padrão é both", () => {
+    expect(brand("default").scheme).toBe("both")
+    const { scheme, ...semModo } = JSON.parse(
+      readFileSync(join(root, "brands/default.json"), "utf8")
+    )
+    expect(scheme).toBe("both")
+    expect(parseBrand("x", "x.json", semModo).scheme).toBe("both")
+  })
+
+  it("rejeita valor que não é both nem dark", () => {
+    expect(() => withBrand("default", { scheme: "light" })).toThrow(BrandError)
+    expect(() => withBrand("default", { scheme: "" })).toThrow(BrandError)
+  })
+
+  it("os tokens do claro saem iguais aos do escuro, com a primária da marca intacta", () => {
+    const tokens = deriveTokens(darkOnly())
+    const css = (mode: "light" | "dark") =>
+      Object.fromEntries(
+        Object.entries(tokens[mode]).map(([key, token]) => [key, token.css])
+      )
+    expect(css("light")).toEqual(css("dark"))
+    expect(toHex(tokens.dark.primary.color)).toBe("#c45322")
+    expect(tokens.dark.primary.color.l).toBeLessThan(0.72)
+    expect(tokens.dark.ring.css).toBe(tokens.dark.primary.css)
+    // o texto sobre a primária é o branco, não o tom mais escuro da escala
+    expect(toHex(tokens.dark["primary-foreground"].color)).toBe("#ffffff")
+    expect(ratio(tokens, "dark", "primary-foreground", "primary")).toBeCloseTo(
+      4.56,
+      2
+    )
+    // fundo e cartão são os do escuro
+    expect(toHex(tokens.light.background.color)).toBe(
+      toHex(
+        deriveTokens(withBrand("jiujitsu", { scheme: "both" })).dark.background
+          .color
+      )
+    )
+  })
+
+  it("o item e a vitrine trazem o mesmo conjunto nos dois modos", () => {
+    const { files } = generateTheme(darkOnly())
+    const item = JSON.parse(
+      files.get("registry/themes/jiujitsu/registry.json")!
+    ).items[0]
+    const { radius, ...light } = item.cssVars.light
+    expect(radius).toBe(darkOnly().radius)
+    expect(light).toEqual(item.cssVars.dark)
+    expect(item.cssVars.dark["primary-text"]).toMatch(/^oklch\(/)
+  })
+
+  it("com both a primária do escuro sobe para L 0.72 e o texto sobre ela é escuro", () => {
+    const tokens = deriveTokens(withBrand("jiujitsu", { scheme: "both" }))
+    expect(tokens.dark.primary.color.l).toBe(0.72)
+    expect(tokens.light).not.toBe(tokens.dark)
+    expect(tokens.light.primary.css).not.toBe(tokens.dark.primary.css)
+  })
+
+  it("o portão vale, e uma vez só: anel de foco sem contraste reprova", () => {
+    const dim = withBrand("jiujitsu", { primary: "#5a2a14", scheme: "dark" })
+    const failures = checkContrast(deriveTokens(dim)).filter(
+      (f) => f.foreground === "ring"
+    )
+    expect(failures.length).toBeGreaterThan(0)
+    expect(failures.every((f) => f.mode === "dark")).toBe(true)
+    expect(() => generateTheme(dim)).toThrow(/anel de foco/)
+  })
+
+  it("texto sobre a primária sem contraste reprova", () => {
+    const pale = withBrand("jiujitsu", { primary: "#f0a070", scheme: "dark" })
+    const failures = checkContrast(deriveTokens(pale))
+    expect(
+      failures.some(
+        (f) =>
+          f.foreground === "primary-foreground" && f.background === "primary"
+      )
+    ).toBe(true)
+  })
+})
+
 describe("item de tema", () => {
   const SHADCN_TOKENS = [
     "background",
@@ -387,6 +563,7 @@ describe("item de tema", () => {
     "popover-foreground",
     "primary",
     "primary-foreground",
+    "primary-text",
     "secondary",
     "secondary-foreground",
     "muted",
@@ -438,6 +615,9 @@ describe("item de tema", () => {
       // utilitários text-destructive-foreground, bg-disabled... no consumidor
       expect(item.cssVars.theme["color-destructive-foreground"]).toBe(
         "var(--destructive-foreground)"
+      )
+      expect(item.cssVars.theme["color-primary-text"]).toBe(
+        "var(--primary-text)"
       )
       expect(item.cssVars.theme["color-disabled"]).toBe("var(--disabled)")
       expect(item.cssVars.theme["color-disabled-foreground"]).toBe(
@@ -593,6 +773,25 @@ describe("CSS do tema sobre os componentes do shadcn", () => {
       )
     })
 
+    it(`${name}: texto na cor da primária usa --primary-text, por data-slot`, () => {
+      const [selector, declarations] = Object.entries(css).find(
+        ([, rule]) => rule.color === "var(--primary-text)"
+      )!
+      expect(declarations).toEqual({ color: "var(--primary-text)" })
+      // botão de variante link (`text-primary`), sem casar `bg-primary` nem
+      // `text-primary-foreground`
+      expect(selector).toContain(
+        '[data-slot][class~="group/button"][class~="text-primary"]'
+      )
+      expect(selector).toContain('[data-slot="badge"][class~="text-primary"]')
+      expect(selector).toContain('[data-slot="field-description"] > a:hover')
+      expect(selector).toContain('[data-slot="empty-description"] > a:hover')
+      expect(vitrine).toContain(
+        `html[data-brand="${name}"] [data-slot][class~="group/button"][class~="text-primary"],`
+      )
+      expect(vitrine).toContain("  color: var(--primary-text);")
+    })
+
     it(`${name}: desabilitado sem opacidade, por par de token`, () => {
       const opacity = Object.entries(css).find(
         ([, declarations]) => declarations.opacity === "1"
@@ -629,4 +828,38 @@ describe("CSS do tema sobre os componentes do shadcn", () => {
       }
     })
   }
+})
+
+describe("texto na cor da primária nos arquivos", () => {
+  function sources(dir: string): string[] {
+    return readdirSync(join(root, dir), { withFileTypes: true }).flatMap(
+      (entry) => {
+        const path = join(dir, entry.name)
+        if (entry.isDirectory())
+          return entry.name === "themes" ? [] : sources(path)
+        return /\.tsx?$/.test(entry.name) ? [path] : []
+      }
+    )
+  }
+  // `text-primary` como classe inteira (com variantes na frente), não
+  // `text-primary-foreground` nem `text-primary-text`
+  const BARE = /(?<![\w-])(?:[^\s"'`]*:)?text-primary(?![\w-])/
+
+  it("só os componentes do shadcn que o tema cobre usam text-primary", () => {
+    const found = sources("src/components/ui")
+      .filter((file) => BARE.test(readFileSync(join(root, file), "utf8")))
+      .map((file) => file.split("/").pop())
+      .sort()
+    // button e badge (variante link), field e empty (link da descrição, em
+    // hover): cada um tem regra por data-slot em scripts/lib/css.ts
+    expect(found).toEqual(["badge.tsx", "button.tsx", "empty.tsx", "field.tsx"])
+  })
+
+  it("os blocos do registry usam text-primary-text", () => {
+    for (const file of sources("registry")) {
+      expect(BARE.test(readFileSync(join(root, file), "utf8")), file).toBe(
+        false
+      )
+    }
+  })
 })

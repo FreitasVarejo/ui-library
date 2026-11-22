@@ -10,5 +10,6 @@
   "density": "normal",
   "shadow": "soft",
   "target": "compact",
+  "scheme": "both",
   "icons": "lucide"
 }

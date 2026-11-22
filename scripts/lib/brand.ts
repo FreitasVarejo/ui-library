@@ -4,9 +4,11 @@ import type { IconPackName } from "./icon-packs.ts"
 export const DENSITIES = ["compact", "normal", "airy"] as const
 export const SHADOWS = ["none", "soft", "strong"] as const
 export const TARGETS = ["compact", "comfortable", "touch"] as const
+export const SCHEMES = ["both", "dark"] as const
 export type Density = (typeof DENSITIES)[number]
 export type Shadow = (typeof SHADOWS)[number]
 export type Target = (typeof TARGETS)[number]
+export type Scheme = (typeof SCHEMES)[number]
 export type Fallback = "sans-serif" | "serif" | "monospace"
 
 export interface BrandFont {
@@ -43,6 +45,18 @@ export interface Brand {
    * (32px), `comfortable` 44px, `touch` 56px; padrão: `compact`
    */
   target: Target
+  /**
+   * modos da marca: `both` (padrão) deriva claro e escuro, e no escuro a
+   * primária sobe para L >= 0.72 (o texto sobre ela é o tom mais escuro);
+   * `dark` é a marca só escura: a primária fica como está, o texto sobre ela
+   * é `primaryForeground` ou branco, e os tokens do claro saem iguais aos do
+   * escuro, para o tema valer com ou sem a classe `dark`. Nos dois casos o
+   * portão de contraste vale (texto sobre a primária, anel de foco, corpo de
+   * texto, `primary-text`). Se a primária não alcançar o contraste de texto
+   * sobre as superfícies, `--primary-text` é a versão dela com a luminosidade
+   * ajustada, usada onde a primária pinta texto ou link
+   */
+  scheme: Scheme
   icons: IconPackName
 }
 
@@ -172,6 +186,8 @@ export function parseBrand(name: string, file: string, data: unknown): Brand {
       raw.target === undefined
         ? "compact"
         : oneOf(file, raw, "target", TARGETS),
+    scheme:
+      raw.scheme === undefined ? "both" : oneOf(file, raw, "scheme", SCHEMES),
     icons,
   }
 }

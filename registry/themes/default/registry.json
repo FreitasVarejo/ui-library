@@ -33,7 +33,8 @@
           "shadow-2xl": "0 24px 48px -12px oklch(0 0 0 / 0.2)",
           "color-destructive-foreground": "var(--destructive-foreground)",
           "color-disabled": "var(--disabled)",
-          "color-disabled-foreground": "var(--disabled-foreground)"
+          "color-disabled-foreground": "var(--disabled-foreground)",
+          "color-primary-text": "var(--primary-text)"
         },
         "light": {
           "background": "oklch(0.984 0.003 247.858)",
@@ -44,6 +45,7 @@
           "popover-foreground": "oklch(0.129 0.042 264.695)",
           "primary": "oklch(0.511 0.23 276.966)",
           "primary-foreground": "oklch(1 0 0)",
+          "primary-text": "oklch(0.511 0.23 276.966)",
           "secondary": "oklch(0.968 0.007 247.896)",
           "secondary-foreground": "oklch(0.208 0.042 265.755)",
           "muted": "oklch(0.968 0.007 247.896)",
@@ -82,6 +84,7 @@
           "popover-foreground": "oklch(0.984 0.003 247.858)",
           "primary": "oklch(0.72 0.23 276.966)",
           "primary-foreground": "oklch(0.129 0.042 264.695)",
+          "primary-text": "oklch(0.72 0.23 276.966)",
           "secondary": "oklch(0.279 0.041 260.031)",
           "secondary-foreground": "oklch(0.984 0.003 247.858)",
           "muted": "oklch(0.279 0.041 260.031)",
@@ -129,6 +132,9 @@
         },
         "[data-slot=\"field-label\"]:has(:focus-visible)": {
           "--tw-ring-shadow": "0 0 #0000"
+        },
+        "[data-slot][class~=\"group/button\"][class~=\"text-primary\"], [data-slot=\"badge\"][class~=\"text-primary\"], [data-slot=\"field-description\"] > a:hover, [data-slot=\"empty-description\"] > a:hover": {
+          "color": "var(--primary-text)"
         },
         "@media (hover: hover)": {
           "[data-slot][class~=\"bg-destructive/10\"]:hover": {

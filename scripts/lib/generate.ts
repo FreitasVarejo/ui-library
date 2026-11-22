@@ -116,9 +116,12 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
   // resolve `--color-*` dos tokens novos sozinho, mas só se o valor for uma
   // cor reconhecida; escrito aqui, o mapeamento não depende disso.
   const colors = Object.fromEntries(
-    ["destructive-foreground", "disabled", "disabled-foreground"].map(
-      (name) => [`color-${name}`, `var(--${name})`]
-    )
+    [
+      "destructive-foreground",
+      "disabled",
+      "disabled-foreground",
+      "primary-text",
+    ].map((name) => [`color-${name}`, `var(--${name})`])
   )
 
   const item = {

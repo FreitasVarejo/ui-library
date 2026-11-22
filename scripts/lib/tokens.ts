@@ -13,6 +13,7 @@ import {
 import type { Ramp } from "./palette.ts"
 
 export type Mode = "light" | "dark"
+const MODES = ["light", "dark"] as const
 
 /** Um token resolvido: a cor para o contraste e o texto CSS para o tema. */
 interface Token {
@@ -100,6 +101,26 @@ function fitDestructive(
 }
 
 /**
+ * `--primary-text`: a primária usada como texto ou link. É a própria primária
+ * quando ela já alcança 4.5:1 sobre o fundo da página, o cartão e o popover;
+ * senão, a primária com só a luminosidade movida (mais escura no claro, mais
+ * clara no escuro) até o menor passo, de 0.005, que passa nas três. O passo é
+ * o que o CSS (3 casas) representa sem arredondar.
+ */
+function fitPrimaryText(mode: Mode, primary: Oklch, surfaces: Oklch[]): Oklch {
+  const direction = mode === "light" ? -1 : 1
+  const passes = (color: Oklch) =>
+    surfaces.every((surface) => contrast(color, surface) >= TEXT)
+  let color = primary
+  for (let step = 0; step < 200 && !passes(color); step++) {
+    const l = Math.round((color.l + direction * 0.005) * 1000) / 1000
+    if (l < 0 || l > 1) break
+    color = lightness(color, l)
+  }
+  return color
+}
+
+/**
  * `--destructive-soft-hover`: o `destructive` com a maior opacidade (em passos
  * de 1%, até o hover do shadcn) em que o texto vermelho ainda passa de 4.5:1
  * sobre o fundo da página e sobre o popover. Sem opacidade que sirva, fica a
@@ -134,14 +155,29 @@ export function deriveTokens(brand: Brand): Record<Mode, ModeTokens> {
   const primary = parseHex(brand.primary, "primary")
   const charts = [0, 55, 110, 200, 300]
 
+  const darkOnly = brand.scheme === "dark"
   const lightPrimary = primary
-  const darkPrimary = lightness(primary, Math.max(primary.l, 0.72))
+  const darkPrimary = darkOnly
+    ? primary
+    : lightness(primary, Math.max(primary.l, 0.72))
   // Claro: texto branco sobre a primária, salvo `primaryForeground` na marca.
-  // Escuro: a primária sobe para L >= 0.72 e o texto é o tom mais escuro.
+  // Escuro: a primária sobe para L >= 0.72 e o texto é o tom mais escuro. Marca
+  // só escura (`scheme: "dark"`): a primária fica como está e o texto sobre ela
+  // é o `primaryForeground` ou branco, como no claro.
   const lightPrimaryFg = brand.primaryForeground
     ? parseHex(brand.primaryForeground, "primaryForeground")
     : WHITE
-  const darkPrimaryFg = ramp[950]
+  const darkPrimaryFg = darkOnly ? lightPrimaryFg : ramp[950]
+  const lightPrimaryText = fitPrimaryText("light", lightPrimary, [
+    ramp[50],
+    WHITE,
+    WHITE,
+  ])
+  const darkPrimaryText = fitPrimaryText("dark", darkPrimary, [
+    ramp[950],
+    ramp[900],
+    ramp[900],
+  ])
 
   const lightDestructiveFg = WHITE
   const darkDestructiveFg = ramp[950]
@@ -171,6 +207,7 @@ export function deriveTokens(brand: Brand): Record<Mode, ModeTokens> {
     "popover-foreground": solid(ramp[950]),
     primary: solid(lightPrimary),
     "primary-foreground": solid(lightPrimaryFg),
+    "primary-text": solid(lightPrimaryText),
     secondary: solid(ramp[100]),
     "secondary-foreground": solid(ramp[900]),
     muted: solid(ramp[100]),
@@ -208,6 +245,7 @@ export function deriveTokens(brand: Brand): Record<Mode, ModeTokens> {
     "popover-foreground": solid(ramp[50]),
     primary: solid(darkPrimary),
     "primary-foreground": solid(darkPrimaryFg),
+    "primary-text": solid(darkPrimaryText),
     secondary: solid(ramp[800]),
     "secondary-foreground": solid(ramp[50]),
     muted: solid(ramp[800]),
@@ -241,7 +279,9 @@ export function deriveTokens(brand: Brand): Record<Mode, ModeTokens> {
     light[key] = solid(hue(primary, offset, 0.62, 0.14))
     dark[key] = solid(hue(primary, offset, 0.72, 0.14))
   })
-  return { light, dark }
+  // Marca só escura: o claro é o escuro (o mesmo objeto, que `checkContrast`
+  // reconhece para não medir duas vezes).
+  return { light: darkOnly ? dark : light, dark }
 }
 
 // Pares que a marca precisa manter nos dois modos. O último campo é o mínimo
@@ -308,6 +348,21 @@ export const CONTRAST_PAIRS: ReadonlyArray<
     "sidebar-accent-foreground",
     "sidebar-accent",
     "texto do item ativo ou em hover da barra lateral",
+  ],
+  [
+    "primary-text",
+    "background",
+    "a cor primária usada como texto ou link não é legível sobre o fundo da página; o tom de texto da primária não alcançou 4.5:1",
+  ],
+  [
+    "primary-text",
+    "card",
+    "a cor primária usada como texto ou link não é legível sobre cartões; o tom de texto da primária não alcançou 4.5:1",
+  ],
+  [
+    "primary-text",
+    "popover",
+    "a cor primária usada como texto ou link não é legível sobre popovers e menus; o tom de texto da primária não alcançou 4.5:1",
   ],
   ["destructive", "card", "texto de erro sobre cartões"],
   [
@@ -428,7 +483,9 @@ export function checkContrast(
   tokens: Record<Mode, ModeTokens>
 ): ContrastFailure[] {
   const failures: ContrastFailure[] = []
-  for (const mode of ["light", "dark"] as const) {
+  // `scheme: "dark"` entrega o mesmo objeto nos dois modos: mede uma vez.
+  const modes = tokens.light === tokens.dark ? (["dark"] as const) : MODES
+  for (const mode of modes) {
     const modeTokens = withDerived(mode, tokens[mode])
     for (const [fg, bg, hint, minimum = TEXT] of CONTRAST_PAIRS) {
       const fgToken = modeTokens[fg]

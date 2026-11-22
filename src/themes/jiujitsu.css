@@ -24,6 +24,7 @@ html[data-brand="jiujitsu"] {
   --popover-foreground: oklch(0.141 0.005 285.823);
   --primary: oklch(0.581 0.157 41.437);
   --primary-foreground: oklch(1 0 0);
+  --primary-text: oklch(0.571 0.157 41.437);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
   --muted: oklch(0.967 0.001 286.375);
@@ -63,6 +64,7 @@ html[data-brand="jiujitsu"].dark {
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.72 0.157 41.437);
   --primary-foreground: oklch(0.141 0.005 285.823);
+  --primary-text: oklch(0.72 0.157 41.437);
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.274 0.006 286.033);
@@ -112,6 +114,13 @@ html[data-brand="jiujitsu"] [data-slot="input-group"]:has([data-slot="command-in
 
 html[data-brand="jiujitsu"] [data-slot="field-label"]:has(:focus-visible) {
   --tw-ring-shadow: 0 0 #0000;
+}
+
+html[data-brand="jiujitsu"] [data-slot][class~="group/button"][class~="text-primary"],
+html[data-brand="jiujitsu"] [data-slot="badge"][class~="text-primary"],
+html[data-brand="jiujitsu"] [data-slot="field-description"] > a:hover,
+html[data-brand="jiujitsu"] [data-slot="empty-description"] > a:hover {
+  color: var(--primary-text);
 }
 
 @media (hover: hover) {

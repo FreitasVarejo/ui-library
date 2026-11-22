@@ -483,6 +483,10 @@ describe("marca só escura (scheme: dark)", () => {
     expect(parseBrand("x", "x.json", semModo).scheme).toBe("both")
   })
 
+  it("a marca jiujitsu declara dark", () => {
+    expect(brand("jiujitsu").scheme).toBe("dark")
+  })
+
   it("rejeita valor que não é both nem dark", () => {
     expect(() => withBrand("default", { scheme: "light" })).toThrow(BrandError)
     expect(() => withBrand("default", { scheme: "" })).toThrow(BrandError)

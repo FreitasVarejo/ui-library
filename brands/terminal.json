@@ -1,0 +1,14 @@
+{
+  "primary": "#047857",
+  "neutral": "neutral",
+  "fonts": {
+    "text": "Space Grotesk",
+    "heading": "Space Grotesk",
+    "mono": "JetBrains Mono"
+  },
+  "radius": "0.125rem",
+  "density": "compact",
+  "shadow": "none",
+  "target": "compact",
+  "icons": "lucide"
+}

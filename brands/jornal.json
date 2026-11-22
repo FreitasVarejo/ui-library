@@ -1,0 +1,14 @@
+{
+  "primary": "#1e3a8a",
+  "neutral": "stone",
+  "fonts": {
+    "text": "Public Sans",
+    "heading": { "family": "Newsreader", "fallback": "serif" },
+    "mono": "Roboto Mono"
+  },
+  "radius": "0.25rem",
+  "density": "airy",
+  "shadow": "none",
+  "target": "comfortable",
+  "icons": "phosphor"
+}

@@ -1,0 +1,219 @@
+/* Gerado por scripts/theme.ts a partir de brands/jornal.json. Não edite. */
+@import "@fontsource-variable/public-sans";
+@import "@fontsource-variable/newsreader";
+@import "@fontsource-variable/roboto-mono";
+
+html[data-brand="jornal"] {
+  --font-sans: 'Public Sans Variable', sans-serif;
+  --font-heading: 'Newsreader Variable', serif;
+  --font-mono: 'Roboto Mono Variable', monospace;
+  --spacing: 0.28rem;
+  --brand-shadow-2xs: 0 0 #0000;
+  --brand-shadow-xs: 0 0 #0000;
+  --brand-shadow-sm: 0 0 #0000;
+  --brand-shadow-md: 0 0 #0000;
+  --brand-shadow-lg: 0 0 #0000;
+  --brand-shadow-xl: 0 0 #0000;
+  --brand-shadow-2xl: 0 0 #0000;
+  --background: oklch(0.985 0.001 106.423);
+  --foreground: oklch(0.147 0.004 49.25);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.147 0.004 49.25);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.147 0.004 49.25);
+  --primary: oklch(0.379 0.138 265.522);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0.001 106.424);
+  --secondary-foreground: oklch(0.216 0.006 56.043);
+  --muted: oklch(0.97 0.001 106.424);
+  --muted-foreground: oklch(0.444 0.011 73.639);
+  --accent: oklch(0.97 0.001 106.424);
+  --accent-foreground: oklch(0.216 0.006 56.043);
+  --destructive: oklch(0.54 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+  --destructive-soft-hover: oklch(0.54 0.22 27 / 10%);
+  --disabled: oklch(0.923 0.003 48.717);
+  --disabled-foreground: oklch(0.444 0.011 73.639);
+  --border: oklch(0.923 0.003 48.717);
+  --input: oklch(0.553 0.013 58.071);
+  --ring: oklch(0.379 0.138 265.522);
+  --sidebar: oklch(0.97 0.001 106.424);
+  --sidebar-foreground: oklch(0.216 0.006 56.043);
+  --sidebar-primary: oklch(0.379 0.138 265.522);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.923 0.003 48.717);
+  --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
+  --sidebar-border: oklch(0.923 0.003 48.717);
+  --sidebar-ring: oklch(0.379 0.138 265.522);
+  --chart-1: oklch(0.62 0.14 265.522);
+  --chart-2: oklch(0.62 0.14 320.522);
+  --chart-3: oklch(0.62 0.14 375.522);
+  --chart-4: oklch(0.62 0.14 465.522);
+  --chart-5: oklch(0.62 0.14 565.522);
+  --radius: 0.25rem;
+}
+
+html[data-brand="jornal"].dark {
+  --background: oklch(0.147 0.004 49.25);
+  --foreground: oklch(0.985 0.001 106.423);
+  --card: oklch(0.216 0.006 56.043);
+  --card-foreground: oklch(0.985 0.001 106.423);
+  --popover: oklch(0.216 0.006 56.043);
+  --popover-foreground: oklch(0.985 0.001 106.423);
+  --primary: oklch(0.72 0.138 265.522);
+  --primary-foreground: oklch(0.147 0.004 49.25);
+  --secondary: oklch(0.268 0.007 34.298);
+  --secondary-foreground: oklch(0.985 0.001 106.423);
+  --muted: oklch(0.268 0.007 34.298);
+  --muted-foreground: oklch(0.709 0.01 56.259);
+  --accent: oklch(0.268 0.007 34.298);
+  --accent-foreground: oklch(0.985 0.001 106.423);
+  --destructive: oklch(0.709 0.191 22.216);
+  --destructive-foreground: oklch(0.147 0.004 49.25);
+  --destructive-soft-hover: oklch(0.709 0.191 22.216 / 20%);
+  --disabled: oklch(0.268 0.007 34.298);
+  --disabled-foreground: oklch(0.709 0.01 56.259);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(0.553 0.013 58.071);
+  --ring: oklch(0.72 0.138 265.522);
+  --sidebar: oklch(0.216 0.006 56.043);
+  --sidebar-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-primary: oklch(0.72 0.138 265.522);
+  --sidebar-primary-foreground: oklch(0.147 0.004 49.25);
+  --sidebar-accent: oklch(0.268 0.007 34.298);
+  --sidebar-accent-foreground: oklch(0.985 0.001 106.423);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.72 0.138 265.522);
+  --chart-1: oklch(0.72 0.14 265.522);
+  --chart-2: oklch(0.72 0.14 320.522);
+  --chart-3: oklch(0.72 0.14 375.522);
+  --chart-4: oklch(0.72 0.14 465.522);
+  --chart-5: oklch(0.72 0.14 565.522);
+}
+
+html[data-brand="jornal"] [data-slot]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+html[data-brand="jornal"] [data-slot="input-group-control"]:focus-visible,
+html[data-brand="jornal"] [data-slot="command-input"]:focus-visible {
+  outline: none;
+}
+
+html[data-brand="jornal"] [data-slot="input-group"]:has([data-slot="input-group-control"]:focus-visible),
+html[data-brand="jornal"] [data-slot="input-group"]:has([data-slot="command-input"]:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+html[data-brand="jornal"] [data-slot="field-label"]:has(:focus-visible) {
+  --tw-ring-shadow: 0 0 #0000;
+}
+
+@media (hover: hover) {
+  html[data-brand="jornal"] [data-slot][class~="bg-destructive/10"]:hover {
+    background-color: var(--destructive-soft-hover);
+    border-color: var(--destructive);
+  }
+}
+
+html[data-brand="jornal"] [data-slot="command-input-wrapper"] [data-slot="input-group"] {
+  background-color: var(--muted);
+  border-color: var(--border);
+}
+
+html[data-brand="jornal"] [data-slot]:is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]):not([data-slot="breadcrumb-page"]) {
+  opacity: 1;
+}
+
+html[data-brand="jornal"] [data-slot][class~="group/button"]:is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) {
+  color: var(--disabled-foreground);
+}
+
+html[data-brand="jornal"] [data-slot][class~="group/button"]:is([class~="bg-primary"], [class~="bg-secondary"], [class~="bg-destructive"], [class~="bg-destructive/10"]):is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) {
+  background-color: var(--disabled);
+}
+
+html[data-brand="jornal"] :is([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"]):is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) {
+  background-color: var(--disabled);
+  color: var(--disabled-foreground);
+}
+
+html[data-brand="jornal"] [data-slot="input-group"]:is(:has(:disabled), [data-disabled]:not([data-disabled="false"])) {
+  background-color: var(--disabled);
+  color: var(--disabled-foreground);
+  opacity: 1;
+}
+
+html[data-brand="jornal"] [data-slot="input-group"]:is(:has(:disabled), [data-disabled]:not([data-disabled="false"])) [data-slot="input-group-addon"] {
+  color: var(--disabled-foreground);
+}
+
+html[data-brand="jornal"] :is([data-slot="input-group-control"]):is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) {
+  color: var(--disabled-foreground);
+}
+
+html[data-brand="jornal"] :is([data-slot="checkbox"], [data-slot="switch"], [data-slot="radio-group-item"]):is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) {
+  background-color: var(--disabled);
+  border-color: var(--disabled-foreground);
+  color: var(--disabled-foreground);
+}
+
+html[data-brand="jornal"] [data-slot="switch"]:is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) [data-slot="switch-thumb"] {
+  background-color: var(--disabled-foreground);
+}
+
+html[data-brand="jornal"] :is([data-slot="select-item"], [data-slot="dropdown-menu-item"], [data-slot="dropdown-menu-checkbox-item"], [data-slot="dropdown-menu-radio-item"], [data-slot="dropdown-menu-sub-trigger"], [data-slot="command-item"], [data-slot="command-input"], [data-slot="tabs-trigger"], [data-slot="sidebar-menu-button"], [data-slot="sidebar-menu-sub-button"], [data-slot="toggle"], [data-slot="toggle-group-item"]):is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) {
+  color: var(--disabled-foreground);
+}
+
+html[data-brand="jornal"] :is([data-slot="select-item"], [data-slot="dropdown-menu-item"], [data-slot="dropdown-menu-checkbox-item"], [data-slot="dropdown-menu-radio-item"], [data-slot="dropdown-menu-sub-trigger"], [data-slot="command-item"], [data-slot="command-input"], [data-slot="tabs-trigger"], [data-slot="sidebar-menu-button"], [data-slot="sidebar-menu-sub-button"], [data-slot="toggle"], [data-slot="toggle-group-item"]):is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) svg {
+  color: var(--disabled-foreground);
+}
+
+html[data-brand="jornal"] .peer:is(:disabled, [data-disabled]:not([data-disabled="false"]), [aria-disabled="true"]) ~ [data-slot="label"],
+html[data-brand="jornal"] [data-disabled="true"] [data-slot="label"],
+html[data-brand="jornal"] [data-disabled="true"] [data-slot="field-label"] {
+  color: var(--disabled-foreground);
+  opacity: 1;
+}
+
+html[data-brand="jornal"] [data-slot][class~="group/button"],
+html[data-brand="jornal"] [data-slot="input"],
+html[data-brand="jornal"] [data-slot="select-trigger"],
+html[data-brand="jornal"] [data-slot="toggle"],
+html[data-brand="jornal"] [data-slot="toggle-group-item"],
+html[data-brand="jornal"] [data-slot="select-item"],
+html[data-brand="jornal"] [data-slot="dropdown-menu-item"],
+html[data-brand="jornal"] [data-slot="dropdown-menu-checkbox-item"],
+html[data-brand="jornal"] [data-slot="dropdown-menu-radio-item"],
+html[data-brand="jornal"] [data-slot="dropdown-menu-sub-trigger"],
+html[data-brand="jornal"] [data-slot="command-item"],
+html[data-brand="jornal"] [data-slot="tabs-trigger"],
+html[data-brand="jornal"] [data-slot="sidebar-menu-button"],
+html[data-brand="jornal"] [data-slot="sidebar-menu-sub-button"] {
+  min-height: 44px;
+}
+
+html[data-brand="jornal"] [data-slot="textarea"] {
+  min-height: max(44px, calc(var(--spacing) * 16));
+}
+
+html[data-brand="jornal"] [data-slot][class~="group/button"][class~="size-6"],
+html[data-brand="jornal"] [data-slot][class~="group/button"][class~="size-7"],
+html[data-brand="jornal"] [data-slot][class~="group/button"][class~="size-8"],
+html[data-brand="jornal"] [data-slot][class~="group/button"][class~="size-9"],
+html[data-brand="jornal"] [data-slot="toggle"] {
+  min-width: 44px;
+}
+
+html[data-brand="jornal"] [data-slot="checkbox"]::after {
+  inset: calc((16px - 44px) / 2);
+}
+
+html[data-brand="jornal"] [data-slot="tabs-list"] {
+  height: auto;
+}

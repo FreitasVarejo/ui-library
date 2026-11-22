@@ -1,0 +1,14 @@
+{
+  "primary": "#7c3aed",
+  "neutral": "zinc",
+  "fonts": {
+    "text": "Geist",
+    "heading": "Geist",
+    "mono": "Geist Mono"
+  },
+  "radius": "0.75rem",
+  "density": "normal",
+  "shadow": "soft",
+  "target": "compact",
+  "icons": "lucide"
+}

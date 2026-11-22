@@ -14,7 +14,12 @@
     "registry/jobs-panel/registry.json",
     "registry/search-results/registry.json",
     "registry/states/registry.json",
+    "registry/themes/aurora/registry.json",
     "registry/themes/default/registry.json",
-    "registry/themes/editorial/registry.json"
+    "registry/themes/editorial/registry.json",
+    "registry/themes/jornal/registry.json",
+    "registry/themes/parque/registry.json",
+    "registry/themes/terminal/registry.json",
+    "registry/themes/terracota/registry.json"
   ]
 }

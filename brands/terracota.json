@@ -1,0 +1,14 @@
+{
+  "primary": "#c2410c",
+  "neutral": "stone",
+  "fonts": {
+    "text": "DM Sans",
+    "heading": "Bricolage Grotesque",
+    "mono": "JetBrains Mono"
+  },
+  "radius": "1rem",
+  "density": "airy",
+  "shadow": "soft",
+  "target": "comfortable",
+  "icons": "tabler"
+}

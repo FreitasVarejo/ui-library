@@ -1,0 +1,204 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "theme-parque",
+      "type": "registry:theme",
+      "title": "Tema parque",
+      "description": "Identidade visual \"parque\": cores em OKLCH (claro e escuro), fontes, raio, densidade, sombra e ícones (phosphor). Instale por cima de outro tema com --overwrite para trocar a identidade.",
+      "dependencies": [
+        "@fontsource-variable/fira-code",
+        "@fontsource-variable/nunito",
+        "@phosphor-icons/react@^2"
+      ],
+      "files": [
+        {
+          "path": "icons.ts",
+          "type": "registry:lib",
+          "target": "@lib/icons.ts"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "font-sans": "'Nunito Variable', sans-serif",
+          "font-heading": "'Nunito Variable', sans-serif",
+          "font-mono": "'Fira Code Variable', monospace",
+          "spacing": "0.25rem",
+          "shadow-2xs": "0 1px 1px 0 oklch(0 0 0 / 0.1)",
+          "shadow-xs": "0 1px 2px 0 oklch(0 0 0 / 0.125)",
+          "shadow-sm": "0 1px 3px 0 oklch(0 0 0 / 0.2), 0 1px 2px -1px oklch(0 0 0 / 0.15)",
+          "shadow-md": "0 4px 8px -2px oklch(0 0 0 / 0.2), 0 2px 4px -2px oklch(0 0 0 / 0.15)",
+          "shadow-lg": "0 10px 16px -4px oklch(0 0 0 / 0.25), 0 4px 6px -4px oklch(0 0 0 / 0.15)",
+          "shadow-xl": "0 20px 24px -6px oklch(0 0 0 / 0.25), 0 8px 8px -6px oklch(0 0 0 / 0.125)",
+          "shadow-2xl": "0 24px 48px -12px oklch(0 0 0 / 0.5)",
+          "color-destructive-foreground": "var(--destructive-foreground)",
+          "color-disabled": "var(--disabled)",
+          "color-disabled-foreground": "var(--disabled-foreground)"
+        },
+        "light": {
+          "background": "oklch(0.984 0.003 247.858)",
+          "foreground": "oklch(0.129 0.042 264.695)",
+          "card": "oklch(1 0 0)",
+          "card-foreground": "oklch(0.129 0.042 264.695)",
+          "popover": "oklch(1 0 0)",
+          "popover-foreground": "oklch(0.129 0.042 264.695)",
+          "primary": "oklch(0.5 0.119 242.749)",
+          "primary-foreground": "oklch(1 0 0)",
+          "secondary": "oklch(0.968 0.007 247.896)",
+          "secondary-foreground": "oklch(0.208 0.042 265.755)",
+          "muted": "oklch(0.968 0.007 247.896)",
+          "muted-foreground": "oklch(0.446 0.043 257.281)",
+          "accent": "oklch(0.968 0.007 247.896)",
+          "accent-foreground": "oklch(0.208 0.042 265.755)",
+          "destructive": "oklch(0.54 0.22 27)",
+          "destructive-foreground": "oklch(1 0 0)",
+          "destructive-soft-hover": "oklch(0.54 0.22 27 / 10%)",
+          "disabled": "oklch(0.929 0.013 255.508)",
+          "disabled-foreground": "oklch(0.446 0.043 257.281)",
+          "border": "oklch(0.929 0.013 255.508)",
+          "input": "oklch(0.554 0.046 257.417)",
+          "ring": "oklch(0.5 0.119 242.749)",
+          "sidebar": "oklch(0.968 0.007 247.896)",
+          "sidebar-foreground": "oklch(0.208 0.042 265.755)",
+          "sidebar-primary": "oklch(0.5 0.119 242.749)",
+          "sidebar-primary-foreground": "oklch(1 0 0)",
+          "sidebar-accent": "oklch(0.929 0.013 255.508)",
+          "sidebar-accent-foreground": "oklch(0.208 0.042 265.755)",
+          "sidebar-border": "oklch(0.929 0.013 255.508)",
+          "sidebar-ring": "oklch(0.5 0.119 242.749)",
+          "chart-1": "oklch(0.62 0.14 242.749)",
+          "chart-2": "oklch(0.62 0.14 297.749)",
+          "chart-3": "oklch(0.62 0.14 352.749)",
+          "chart-4": "oklch(0.62 0.14 442.749)",
+          "chart-5": "oklch(0.62 0.14 542.749)",
+          "radius": "1.25rem"
+        },
+        "dark": {
+          "background": "oklch(0.129 0.042 264.695)",
+          "foreground": "oklch(0.984 0.003 247.858)",
+          "card": "oklch(0.208 0.042 265.755)",
+          "card-foreground": "oklch(0.984 0.003 247.858)",
+          "popover": "oklch(0.208 0.042 265.755)",
+          "popover-foreground": "oklch(0.984 0.003 247.858)",
+          "primary": "oklch(0.72 0.119 242.749)",
+          "primary-foreground": "oklch(0.129 0.042 264.695)",
+          "secondary": "oklch(0.279 0.041 260.031)",
+          "secondary-foreground": "oklch(0.984 0.003 247.858)",
+          "muted": "oklch(0.279 0.041 260.031)",
+          "muted-foreground": "oklch(0.704 0.04 256.788)",
+          "accent": "oklch(0.279 0.041 260.031)",
+          "accent-foreground": "oklch(0.984 0.003 247.858)",
+          "destructive": "oklch(0.704 0.191 22.216)",
+          "destructive-foreground": "oklch(0.129 0.042 264.695)",
+          "destructive-soft-hover": "oklch(0.704 0.191 22.216 / 22%)",
+          "disabled": "oklch(0.279 0.041 260.031)",
+          "disabled-foreground": "oklch(0.704 0.04 256.788)",
+          "border": "oklch(1 0 0 / 10%)",
+          "input": "oklch(0.554 0.046 257.417)",
+          "ring": "oklch(0.72 0.119 242.749)",
+          "sidebar": "oklch(0.208 0.042 265.755)",
+          "sidebar-foreground": "oklch(0.984 0.003 247.858)",
+          "sidebar-primary": "oklch(0.72 0.119 242.749)",
+          "sidebar-primary-foreground": "oklch(0.129 0.042 264.695)",
+          "sidebar-accent": "oklch(0.279 0.041 260.031)",
+          "sidebar-accent-foreground": "oklch(0.984 0.003 247.858)",
+          "sidebar-border": "oklch(1 0 0 / 10%)",
+          "sidebar-ring": "oklch(0.72 0.119 242.749)",
+          "chart-1": "oklch(0.72 0.14 242.749)",
+          "chart-2": "oklch(0.72 0.14 297.749)",
+          "chart-3": "oklch(0.72 0.14 352.749)",
+          "chart-4": "oklch(0.72 0.14 442.749)",
+          "chart-5": "oklch(0.72 0.14 542.749)"
+        }
+      },
+      "css": {
+        "@import \"@fontsource-variable/nunito\"": {},
+        "@import \"@fontsource-variable/fira-code\"": {},
+        "[data-slot]:focus-visible": {
+          "outline": "2px solid var(--ring)",
+          "outline-offset": "2px",
+          "--tw-ring-shadow": "0 0 #0000"
+        },
+        "[data-slot=\"input-group-control\"]:focus-visible, [data-slot=\"command-input\"]:focus-visible": {
+          "outline": "none"
+        },
+        "[data-slot=\"input-group\"]:has([data-slot=\"input-group-control\"]:focus-visible), [data-slot=\"input-group\"]:has([data-slot=\"command-input\"]:focus-visible)": {
+          "outline": "2px solid var(--ring)",
+          "outline-offset": "2px",
+          "--tw-ring-shadow": "0 0 #0000"
+        },
+        "[data-slot=\"field-label\"]:has(:focus-visible)": {
+          "--tw-ring-shadow": "0 0 #0000"
+        },
+        "@media (hover: hover)": {
+          "[data-slot][class~=\"bg-destructive/10\"]:hover": {
+            "background-color": "var(--destructive-soft-hover)",
+            "border-color": "var(--destructive)"
+          }
+        },
+        "[data-slot=\"command-input-wrapper\"] [data-slot=\"input-group\"]": {
+          "background-color": "var(--muted)",
+          "border-color": "var(--border)"
+        },
+        "[data-slot]:is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"]):not([data-slot=\"breadcrumb-page\"])": {
+          "opacity": "1"
+        },
+        "[data-slot][class~=\"group/button\"]:is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"])": {
+          "color": "var(--disabled-foreground)"
+        },
+        "[data-slot][class~=\"group/button\"]:is([class~=\"bg-primary\"], [class~=\"bg-secondary\"], [class~=\"bg-destructive\"], [class~=\"bg-destructive/10\"]):is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"])": {
+          "background-color": "var(--disabled)"
+        },
+        ":is([data-slot=\"input\"], [data-slot=\"textarea\"], [data-slot=\"select-trigger\"]):is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"])": {
+          "background-color": "var(--disabled)",
+          "color": "var(--disabled-foreground)"
+        },
+        "[data-slot=\"input-group\"]:is(:has(:disabled), [data-disabled]:not([data-disabled=\"false\"]))": {
+          "background-color": "var(--disabled)",
+          "color": "var(--disabled-foreground)",
+          "opacity": "1"
+        },
+        "[data-slot=\"input-group\"]:is(:has(:disabled), [data-disabled]:not([data-disabled=\"false\"])) [data-slot=\"input-group-addon\"]": {
+          "color": "var(--disabled-foreground)"
+        },
+        ":is([data-slot=\"input-group-control\"]):is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"])": {
+          "color": "var(--disabled-foreground)"
+        },
+        ":is([data-slot=\"checkbox\"], [data-slot=\"switch\"], [data-slot=\"radio-group-item\"]):is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"])": {
+          "background-color": "var(--disabled)",
+          "border-color": "var(--disabled-foreground)",
+          "color": "var(--disabled-foreground)"
+        },
+        "[data-slot=\"switch\"]:is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"]) [data-slot=\"switch-thumb\"]": {
+          "background-color": "var(--disabled-foreground)"
+        },
+        ":is([data-slot=\"select-item\"], [data-slot=\"dropdown-menu-item\"], [data-slot=\"dropdown-menu-checkbox-item\"], [data-slot=\"dropdown-menu-radio-item\"], [data-slot=\"dropdown-menu-sub-trigger\"], [data-slot=\"command-item\"], [data-slot=\"command-input\"], [data-slot=\"tabs-trigger\"], [data-slot=\"sidebar-menu-button\"], [data-slot=\"sidebar-menu-sub-button\"], [data-slot=\"toggle\"], [data-slot=\"toggle-group-item\"]):is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"])": {
+          "color": "var(--disabled-foreground)"
+        },
+        ":is([data-slot=\"select-item\"], [data-slot=\"dropdown-menu-item\"], [data-slot=\"dropdown-menu-checkbox-item\"], [data-slot=\"dropdown-menu-radio-item\"], [data-slot=\"dropdown-menu-sub-trigger\"], [data-slot=\"command-item\"], [data-slot=\"command-input\"], [data-slot=\"tabs-trigger\"], [data-slot=\"sidebar-menu-button\"], [data-slot=\"sidebar-menu-sub-button\"], [data-slot=\"toggle\"], [data-slot=\"toggle-group-item\"]):is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"]) svg": {
+          "color": "var(--disabled-foreground)"
+        },
+        ".peer:is(:disabled, [data-disabled]:not([data-disabled=\"false\"]), [aria-disabled=\"true\"]) ~ [data-slot=\"label\"], [data-disabled=\"true\"] [data-slot=\"label\"], [data-disabled=\"true\"] [data-slot=\"field-label\"]": {
+          "color": "var(--disabled-foreground)",
+          "opacity": "1"
+        },
+        "[data-slot][class~=\"group/button\"], [data-slot=\"input\"], [data-slot=\"select-trigger\"], [data-slot=\"toggle\"], [data-slot=\"toggle-group-item\"], [data-slot=\"select-item\"], [data-slot=\"dropdown-menu-item\"], [data-slot=\"dropdown-menu-checkbox-item\"], [data-slot=\"dropdown-menu-radio-item\"], [data-slot=\"dropdown-menu-sub-trigger\"], [data-slot=\"command-item\"], [data-slot=\"tabs-trigger\"], [data-slot=\"sidebar-menu-button\"], [data-slot=\"sidebar-menu-sub-button\"]": {
+          "min-height": "56px"
+        },
+        "[data-slot=\"textarea\"]": {
+          "min-height": "max(56px, calc(var(--spacing) * 16))"
+        },
+        "[data-slot][class~=\"group/button\"][class~=\"size-6\"], [data-slot][class~=\"group/button\"][class~=\"size-7\"], [data-slot][class~=\"group/button\"][class~=\"size-8\"], [data-slot][class~=\"group/button\"][class~=\"size-9\"], [data-slot=\"toggle\"]": {
+          "min-width": "56px"
+        },
+        "[data-slot=\"checkbox\"]::after": {
+          "inset": "calc((16px - 56px) / 2)"
+        },
+        "[data-slot=\"tabs-list\"]": {
+          "height": "auto"
+        }
+      },
+      "docs": "Tema parque aplicado. Os blocos importam ícones de @/lib/icons (pacote phosphor); para trocar de identidade, instale outro theme-<nome> com --overwrite."
+    }
+  ]
+}

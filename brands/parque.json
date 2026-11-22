@@ -1,0 +1,14 @@
+{
+  "primary": "#0369a1",
+  "neutral": "slate",
+  "fonts": {
+    "text": "Nunito",
+    "heading": "Nunito",
+    "mono": "Fira Code"
+  },
+  "radius": "1.25rem",
+  "density": "normal",
+  "shadow": "strong",
+  "target": "touch",
+  "icons": "phosphor"
+}

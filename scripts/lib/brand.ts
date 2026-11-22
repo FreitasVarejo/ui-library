@@ -18,6 +18,14 @@ export interface BrandFont {
    * (um import por peso) em vez de `@fontsource-variable/<família>`
    */
   weights?: number[]
+  /**
+   * fonte fornecida pelo consumidor: o item `registry:theme` declara só o nome
+   * da família (sem `@import` nem dependência, e sem o sufixo " Variable" na
+   * pilha) e quem consome traz o `@font-face`. Na vitrine, com `weights`
+   * importa o `@fontsource/<família>` estático só em `src/themes/<marca>.css`,
+   * para mostrar a fonte de verdade; sem `weights`, a vitrine fica no fallback.
+   */
+  provided?: boolean
 }
 
 export interface Brand {
@@ -104,10 +112,15 @@ function font(
         `fonts.${key}.weights deve ser uma lista de pesos de 100 a 900`
       )
     }
+    const provided = entry.provided
+    if (provided !== undefined && typeof provided !== "boolean") {
+      fail(file, `fonts.${key}.provided deve ser true ou false`)
+    }
     return {
       family: family.trim(),
       fallback: fallback as Fallback,
       ...(weights === undefined ? {} : { weights: weights as number[] }),
+      ...(provided === undefined ? {} : { provided }),
     }
   }
   return fail(file, `campo "fonts.${key}" ausente`)

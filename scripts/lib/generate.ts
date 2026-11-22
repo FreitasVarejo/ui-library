@@ -43,8 +43,13 @@ export function fontImports(font: BrandFont): string[] {
     : [pkg]
 }
 
+/**
+ * Nome da família na pilha: o do pacote estático e o da fonte fornecida pelo
+ * consumidor valem como estão; o variável do @fontsource leva " Variable".
+ */
 export function fontStack(font: BrandFont): string {
-  const family = font.weights ? font.family : `${font.family} Variable`
+  const family =
+    font.weights || font.provided ? font.family : `${font.family} Variable`
   return `'${family}', ${font.fallback}`
 }
 
@@ -125,7 +130,10 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
       `fontes, raio, densidade, sombra e ícones (${brand.icons}). ` +
       `Instale por cima de outro tema com --overwrite para trocar a identidade.`,
     dependencies: [
-      ...new Set([...fontList.map(fontPackage), pack.dependency]),
+      ...new Set([
+        ...fontList.filter((font) => !font.provided).map(fontPackage),
+        pack.dependency,
+      ]),
     ].sort(),
     files: [
       {
@@ -141,7 +149,10 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
     },
     css: {
       ...Object.fromEntries(
-        fontList.flatMap(fontImports).map((spec) => [`@import "${spec}"`, {}])
+        fontList
+          .filter((font) => !font.provided)
+          .flatMap(fontImports)
+          .map((spec) => [`@import "${spec}"`, {}])
       ),
       ...cssField(rules),
     },
@@ -158,7 +169,10 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
 
   const vitrine = [
     `/* Gerado por scripts/theme.ts a partir de brands/${brand.name}.json. Não edite. */`,
-    ...fontList.flatMap(fontImports).map((spec) => `@import "${spec}";`),
+    ...fontList
+      .filter((font) => !font.provided || font.weights)
+      .flatMap(fontImports)
+      .map((spec) => `@import "${spec}";`),
     ``,
     cssBlock(`html[data-brand="${brand.name}"]`, {
       ...fonts,

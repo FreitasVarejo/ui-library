@@ -106,6 +106,60 @@ describe("contraste do tema", () => {
     ).toThrow(BrandError)
   })
 
+  it("fonte fornecida pelo consumidor: item sem import nem dependência, vitrine com import", () => {
+    const base = {
+      primary: "#4f46e5",
+      neutral: "slate",
+      fonts: {
+        text: "Inter",
+        heading: {
+          family: "Barlow Condensed",
+          weights: [600, 700],
+          provided: true,
+        },
+        mono: "JetBrains Mono",
+      },
+      radius: "0.5rem",
+      density: "normal",
+      shadow: "soft",
+      icons: "lucide",
+    }
+    const theme = generateTheme(parseBrand("fornecida", "fornecida.json", base))
+    const fragment = theme.files.get("registry/themes/fornecida/registry.json")
+    const item = JSON.parse(fragment ?? "{}").items[0]
+    expect(item.dependencies.join()).not.toContain("barlow-condensed")
+    expect(Object.keys(item.css).join()).not.toContain("barlow-condensed")
+    expect(item.cssVars.theme["font-heading"]).toBe(
+      "'Barlow Condensed', sans-serif"
+    )
+    const vitrine = theme.files.get("src/themes/fornecida.css") ?? ""
+    expect(vitrine).toContain('@import "@fontsource/barlow-condensed/600.css";')
+    expect(vitrine).toContain('@import "@fontsource/barlow-condensed/700.css";')
+
+    const semPesos = generateTheme(
+      parseBrand("fornecida", "fornecida.json", {
+        ...base,
+        fonts: {
+          ...base.fonts,
+          heading: { family: "Barlow Condensed", provided: true },
+        },
+      })
+    )
+    expect(semPesos.files.get("src/themes/fornecida.css")).not.toContain(
+      "barlow-condensed"
+    )
+
+    expect(() =>
+      parseBrand("x", "x.json", {
+        ...base,
+        fonts: {
+          ...base.fonts,
+          heading: { family: "A", provided: "sim" },
+        },
+      })
+    ).toThrow(BrandError)
+  })
+
   it("falha em campo inválido da marca", () => {
     expect(() =>
       parseBrand("x", "x.json", {

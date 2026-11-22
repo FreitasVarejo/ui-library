@@ -6,7 +6,8 @@
     "heading": {
       "family": "Barlow Condensed",
       "fallback": "sans-serif",
-      "weights": [600, 700]
+      "weights": [600, 700],
+      "provided": true
     },
     "mono": "JetBrains Mono"
   },

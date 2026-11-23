@@ -4,15 +4,30 @@ import type { IconPackName } from "./icon-packs.ts"
 export const DENSITIES = ["compact", "normal", "airy"] as const
 export const SHADOWS = ["none", "soft", "strong"] as const
 export const TARGETS = ["compact", "comfortable", "touch"] as const
+export const SCHEMES = ["both", "dark"] as const
 export type Density = (typeof DENSITIES)[number]
 export type Shadow = (typeof SHADOWS)[number]
 export type Target = (typeof TARGETS)[number]
+export type Scheme = (typeof SCHEMES)[number]
 export type Fallback = "sans-serif" | "serif" | "monospace"
 
 export interface BrandFont {
   /** nome do Google Fonts, ex.: "Source Sans 3" */
   family: string
   fallback: Fallback
+  /**
+   * pesos de uma fonte sem versão variável: usa `@fontsource/<família>` estático
+   * (um import por peso) em vez de `@fontsource-variable/<família>`
+   */
+  weights?: number[]
+  /**
+   * fonte fornecida pelo consumidor: o item `registry:theme` declara só o nome
+   * da família (sem `@import` nem dependência, e sem o sufixo " Variable" na
+   * pilha) e quem consome traz o `@font-face`. Na vitrine, com `weights`
+   * importa o `@fontsource/<família>` estático só em `src/themes/<marca>.css`,
+   * para mostrar a fonte de verdade; sem `weights`, a vitrine fica no fallback.
+   */
+  provided?: boolean
 }
 
 export interface Brand {
@@ -30,6 +45,18 @@ export interface Brand {
    * (32px), `comfortable` 44px, `touch` 56px; padrão: `compact`
    */
   target: Target
+  /**
+   * modos da marca: `both` (padrão) deriva claro e escuro, e no escuro a
+   * primária sobe para L >= 0.72 (o texto sobre ela é o tom mais escuro);
+   * `dark` é a marca só escura: a primária fica como está, o texto sobre ela
+   * é `primaryForeground` ou branco, e os tokens do claro saem iguais aos do
+   * escuro, para o tema valer com ou sem a classe `dark`. Nos dois casos o
+   * portão de contraste vale (texto sobre a primária, anel de foco, corpo de
+   * texto, `primary-text`). Se a primária não alcançar o contraste de texto
+   * sobre as superfícies, `--primary-text` é a versão dela com a luminosidade
+   * ajustada, usada onde a primária pinta texto ou link
+   */
+  scheme: Scheme
   icons: IconPackName
 }
 
@@ -85,7 +112,30 @@ function font(
     if (!FALLBACKS.includes(fallback as Fallback)) {
       fail(file, `fonts.${key}.fallback deve ser um de ${FALLBACKS.join(", ")}`)
     }
-    return { family: family.trim(), fallback: fallback as Fallback }
+    const weights = entry.weights
+    if (
+      weights !== undefined &&
+      (!Array.isArray(weights) ||
+        weights.length === 0 ||
+        !weights.every(
+          (weight) => Number.isInteger(weight) && weight >= 100 && weight <= 900
+        ))
+    ) {
+      fail(
+        file,
+        `fonts.${key}.weights deve ser uma lista de pesos de 100 a 900`
+      )
+    }
+    const provided = entry.provided
+    if (provided !== undefined && typeof provided !== "boolean") {
+      fail(file, `fonts.${key}.provided deve ser true ou false`)
+    }
+    return {
+      family: family.trim(),
+      fallback: fallback as Fallback,
+      ...(weights === undefined ? {} : { weights: weights as number[] }),
+      ...(provided === undefined ? {} : { provided }),
+    }
   }
   return fail(file, `campo "fonts.${key}" ausente`)
 }
@@ -136,6 +186,8 @@ export function parseBrand(name: string, file: string, data: unknown): Brand {
       raw.target === undefined
         ? "compact"
         : oneOf(file, raw, "target", TARGETS),
+    scheme:
+      raw.scheme === undefined ? "both" : oneOf(file, raw, "scheme", SCHEMES),
     icons,
   }
 }

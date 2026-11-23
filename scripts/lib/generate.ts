@@ -25,13 +25,32 @@ function slug(family: string): string {
   return family.toLowerCase().replace(/\s+/g, "-")
 }
 
-/** Pacote @fontsource variável de uma família do Google Fonts. */
+/**
+ * Pacote @fontsource de uma família do Google Fonts: o variável, ou o estático
+ * quando a marca lista `weights` (famílias sem versão variável).
+ */
 export function fontPackage(font: BrandFont): string {
-  return `@fontsource-variable/${slug(font.family)}`
+  return font.weights
+    ? `@fontsource/${slug(font.family)}`
+    : `@fontsource-variable/${slug(font.family)}`
 }
 
+/** Especificadores de `@import` de uma fonte: um por peso no estático. */
+export function fontImports(font: BrandFont): string[] {
+  const pkg = fontPackage(font)
+  return font.weights
+    ? font.weights.map((weight) => `${pkg}/${weight}.css`)
+    : [pkg]
+}
+
+/**
+ * Nome da família na pilha: o do pacote estático e o da fonte fornecida pelo
+ * consumidor valem como estão; o variável do @fontsource leva " Variable".
+ */
 export function fontStack(font: BrandFont): string {
-  return `'${font.family} Variable', ${font.fallback}`
+  const family =
+    font.weights || font.provided ? font.family : `${font.family} Variable`
+  return `'${family}', ${font.fallback}`
 }
 
 function uniqueFonts(brand: Brand): BrandFont[] {
@@ -97,9 +116,12 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
   // resolve `--color-*` dos tokens novos sozinho, mas só se o valor for uma
   // cor reconhecida; escrito aqui, o mapeamento não depende disso.
   const colors = Object.fromEntries(
-    ["destructive-foreground", "disabled", "disabled-foreground"].map(
-      (name) => [`color-${name}`, `var(--${name})`]
-    )
+    [
+      "destructive-foreground",
+      "disabled",
+      "disabled-foreground",
+      "primary-text",
+    ].map((name) => [`color-${name}`, `var(--${name})`])
   )
 
   const item = {
@@ -111,7 +133,10 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
       `fontes, raio, densidade, sombra e ícones (${brand.icons}). ` +
       `Instale por cima de outro tema com --overwrite para trocar a identidade.`,
     dependencies: [
-      ...new Set([...fontList.map(fontPackage), pack.dependency]),
+      ...new Set([
+        ...fontList.filter((font) => !font.provided).map(fontPackage),
+        pack.dependency,
+      ]),
     ].sort(),
     files: [
       {
@@ -127,7 +152,10 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
     },
     css: {
       ...Object.fromEntries(
-        fontList.map((font) => [`@import "${fontPackage(font)}"`, {}])
+        fontList
+          .filter((font) => !font.provided)
+          .flatMap(fontImports)
+          .map((spec) => [`@import "${spec}"`, {}])
       ),
       ...cssField(rules),
     },
@@ -144,7 +172,10 @@ export function generateTheme(brand: Brand): ThemeArtifacts {
 
   const vitrine = [
     `/* Gerado por scripts/theme.ts a partir de brands/${brand.name}.json. Não edite. */`,
-    ...fontList.map((font) => `@import "${fontPackage(font)}";`),
+    ...fontList
+      .filter((font) => !font.provided || font.weights)
+      .flatMap(fontImports)
+      .map((spec) => `@import "${spec}";`),
     ``,
     cssBlock(`html[data-brand="${brand.name}"]`, {
       ...fonts,

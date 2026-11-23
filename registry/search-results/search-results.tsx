@@ -170,7 +170,7 @@ export function SearchResults({
                 {result.href ? (
                   <Link
                     href={result.href}
-                    className="text-primary underline-offset-4 hover:underline"
+                    className="text-primary-text underline-offset-4 hover:underline"
                   >
                     <HighlightedText
                       text={result.title}

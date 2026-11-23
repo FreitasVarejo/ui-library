@@ -211,6 +211,21 @@ function disabledRules(): CssRule[] {
 
 function surfaceRules(): CssRule[] {
   return [
+    // Texto na cor da primária: o shadcn escreve `text-primary` no botão e no
+    // selo de variante `link` e `[&>a:hover]:text-primary` nos links das
+    // descrições de campo e de estado vazio. A primária cheia pode não passar
+    // 4.5:1 como texto (é a cor do preenchimento, com texto branco por cima);
+    // `--primary-text` é o tom que passa. O botão desabilitado segue pintado
+    // pela regra de desabilitado, que tem especificidade maior.
+    {
+      selectors: [
+        `${BUTTON}[class~="text-primary"]`,
+        `${slot("badge")}[class~="text-primary"]`,
+        `${slot("field-description")} > a:hover`,
+        `${slot("empty-description")} > a:hover`,
+      ],
+      declarations: { color: "var(--primary-text)" },
+    },
     // Hover do botão destrutivo suave (`bg-destructive/10`): o shadcn sobe
     // para 20% (30% no escuro) e o texto vermelho deixa de passar 4.5:1. O
     // gerador calcula a maior mistura que passa e a escreve em

@@ -51,6 +51,28 @@ describe("Sheet", () => {
     expect(dialog.getAttribute("data-side")).toBe("bottom")
   })
 
+  it("o diálogo declara aria-modal, e uma prop de quem chama não o derruba", async () => {
+    render(
+      <>
+        <Sheet>
+          <SheetTitle>Padrão</SheetTitle>
+        </Sheet>
+        <Sheet aria-modal={false}>
+          <SheetTitle>Tentativa de derrubar</SheetTitle>
+        </Sheet>
+      </>
+    )
+    const first = await screen.findByText("Padrão")
+    const second = await screen.findByText("Tentativa de derrubar")
+
+    expect(first.closest('[role="dialog"]')?.getAttribute("aria-modal")).toBe(
+      "true"
+    )
+    expect(second.closest('[role="dialog"]')?.getAttribute("aria-modal")).toBe(
+      "true"
+    )
+  })
+
   it("foca o título ao abrir", async () => {
     render(<Opener />)
     fireEvent.click(screen.getByRole("button", { name: "abrir" }))

@@ -175,6 +175,9 @@ export function Sheet({
               {...props}
               data-slot="sheet"
               data-side={side}
+              // O Base UI não escreve `aria-modal` no diálogo. Vem depois do
+              // `{...props}`, como o `data-slot`, para que nada de quem chama o derrube.
+              aria-modal="true"
               data-base-ui-swipe-ignore={swipeToDismiss ? undefined : ""}
               ref={(node) => {
                 popupRef.current = node

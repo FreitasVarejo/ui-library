@@ -632,6 +632,69 @@ for (const brand of brands) {
       await page.keyboard.press("Escape")
       await palette.waitFor({ state: "detached" })
       await page.close()
+
+      // sheet: foco ao abrir no título e de volta ao botão ao fechar; pilha
+      // (só a de cima responde ao Esc e tem o backGuard); sem onOpenChange não fecha
+      page = await open(context, `${tag} sheet`, { ...common, item: "sheet" })
+      await noOverflow(page, `${tag} sheet`)
+      const sheets = page.getByRole("dialog")
+      check((await sheets.count()) === 0, `${tag}: sheet aberta sem acionar`)
+      const closeCall = page.getByRole("button", { name: "Fechar a chamada" })
+      await closeCall.click()
+      await sheets.waitFor()
+      check(
+        await sheets
+          .getByRole("heading", { name: "Fechar a chamada?" })
+          .evaluate((element) => element === document.activeElement),
+        `${tag}: a sheet não focou o título ao abrir`
+      )
+      await shot(page, `${tag}--sheet`)
+      await page.keyboard.press("Escape")
+      await sheets.waitFor({ state: "detached" })
+      check(
+        await closeCall.evaluate(
+          (element) => element === document.activeElement
+        ),
+        `${tag}: o foco não voltou ao botão que abriu a sheet`
+      )
+      await page.getByRole("button", { name: "Abrir a folha da aula" }).click()
+      const lessonSheet = sheets.first()
+      await lessonSheet.waitFor()
+      const enlarge = lessonSheet.getByRole("button", {
+        name: "Ampliar a foto",
+      })
+      await enlarge.click()
+      await page.waitForFunction(
+        () => document.querySelectorAll('[role="dialog"]').length === 2
+      )
+      check(
+        (await page.getByText("backGuards montados: 1").count()) === 1,
+        `${tag}: o backGuard não está só na sheet de cima`
+      )
+      await shot(page, `${tag}--sheet-stack`)
+      await page.keyboard.press("Escape")
+      await page.waitForFunction(
+        () => document.querySelectorAll('[role="dialog"]').length === 1
+      )
+      check(
+        await enlarge.evaluate((element) => element === document.activeElement),
+        `${tag}: o foco não voltou à miniatura que abriu a sheet de cima`
+      )
+      await page.keyboard.press("Escape")
+      await sheets.waitFor({ state: "detached" })
+      await page.getByRole("button", { name: "Fazer a pergunta" }).click()
+      await sheets.waitFor()
+      await shot(page, `${tag}--sheet-locked`)
+      await page.keyboard.press("Escape")
+      await page.waitForTimeout(300)
+      check(
+        (await sheets.count()) === 1,
+        `${tag}: a sheet sem onOpenChange fechou com o Esc`
+      )
+      await page.getByRole("button", { name: "Responder" }).click()
+      await sheets.waitFor({ state: "detached" })
+      await noOverflow(page, `${tag} sheet após fechar`)
+      await page.close()
       await context.close()
     }
   }

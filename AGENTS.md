@@ -11,7 +11,8 @@ Biblioteca pessoal de blocos React distribuída como registry do shadcn/ui
   - `registry.json` (raiz): só `include` dos fragmentos.
   - `registry/<item>/`: código do item e o `registry.json` dele (`app-shell`,
     `states`, `feedback`, `data-table`, `search-results`, `detail-page`,
-    `entity-form`, `file-upload`, `jobs-panel`, `command-palette`, `agent-kit`).
+    `entity-form`, `file-upload`, `jobs-panel`, `command-palette`, `sheet`,
+    `agent-kit`).
   - `brands/<nome>.json`: identidade visual (campos: veja `brands/default.json`).
   - `registry/themes/<nome>/` e `src/themes/<nome>.css`: **gerados**, não edite.
   - `src/components/ui/`, `src/hooks/`: componentes do shadcn, só da vitrine.

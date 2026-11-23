@@ -8,6 +8,7 @@ import { FeedbackPage } from "./pages/feedback-page"
 import { FileUploadPage } from "./pages/file-upload-page"
 import { JobsPanelPage } from "./pages/jobs-panel-page"
 import { SearchResultsPage } from "./pages/search-results-page"
+import { SheetPage } from "./pages/sheet-page"
 import { ShellPage } from "./pages/shell-page"
 import { StatesPage } from "./pages/states-page"
 import { ThemePage } from "./pages/theme-page"
@@ -25,6 +26,7 @@ const ITEMS = [
   { id: "file-upload", label: "file-upload", page: FileUploadPage },
   { id: "jobs-panel", label: "jobs-panel", page: JobsPanelPage },
   { id: "command-palette", label: "command-palette", page: CommandPalettePage },
+  { id: "sheet", label: "sheet", page: SheetPage },
   { id: "theme", label: "tema", page: ThemePage },
 ] as const
 

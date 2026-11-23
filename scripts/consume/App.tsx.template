@@ -29,6 +29,7 @@ import {
 import { FileUpload } from "@/components/file-upload"
 import { JobsPanel } from "@/components/jobs-panel"
 import { SearchResults } from "@/components/search-results"
+import { Sheet, SheetClose, SheetTitle } from "@/components/sheet"
 import { Icons } from "@/lib/icons"
 
 interface Doc {
@@ -54,6 +55,7 @@ type Values = z.infer<typeof schema>
 export function App() {
   const [view, setView] = useState("home")
   const { confirm, dialog } = useConfirmDestructive()
+  const [sheetOpen, setSheetOpen] = useState(false)
 
   return (
     <>
@@ -110,6 +112,9 @@ export function App() {
           </Button>
           <Button variant="outline" onClick={() => setView("search")}>
             Buscar
+          </Button>
+          <Button variant="outline" onClick={() => setSheetOpen(true)}>
+            Abrir folha
           </Button>
         </div>
         <DataTable
@@ -183,6 +188,13 @@ export function App() {
         <ForbiddenState />
       </AppShell>
       {dialog}
+      <Sheet
+        open={sheetOpen}
+        onOpenChange={(open) => !open && setSheetOpen(false)}
+      >
+        <SheetTitle>Folha</SheetTitle>
+        <SheetClose render={<Button variant="outline" />}>Fechar</SheetClose>
+      </Sheet>
       <AppToaster />
     </>
   )

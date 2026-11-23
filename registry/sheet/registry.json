@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "sheet",
+      "type": "registry:block",
+      "title": "Sheet",
+      "description": "Folha modal sobre o Drawer do Base UI: pilha (só a de cima responde), retorno do foco ao controle que a abriu e prop backGuard para o voltar do aparelho. Sai de baixo, de cima ou dos lados.",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "sheet.tsx",
+          "type": "registry:component",
+          "target": "@components/sheet/sheet.tsx"
+        },
+        {
+          "path": "sheet-stack.ts",
+          "type": "registry:component",
+          "target": "@components/sheet/sheet-stack.ts"
+        },
+        {
+          "path": "focus-return.ts",
+          "type": "registry:component",
+          "target": "@components/sheet/focus-return.ts"
+        },
+        {
+          "path": "index.ts",
+          "type": "registry:component",
+          "target": "@components/sheet/index.ts"
+        }
+      ],
+      "docs": "Sem texto próprio: título, descrição e botões são de quem usa. <Sheet open onOpenChange={(o) => !o && fechar()} backGuard={<MeuVoltar onClose={fechar} />}><SheetTitle>Título</SheetTitle>…</Sheet>. Sem onOpenChange a folha não fecha sozinha (Esc, toque fora e arrasto não fazem nada). Com duas abertas, só a de cima responde e monta o backGuard. A folha não mexe no histórico: o backGuard é a peça do roteador (um bloqueio de navegação POP que chama onClose). Depende de Base UI e do utils do shadcn; sem tema nem ícones."
+    }
+  ]
+}
